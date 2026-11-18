@@ -142,6 +142,7 @@
                 <th>Customer</th>
                 <th>10-Digit ID</th>
                 <th>Contact</th>
+                <th>Auth Provider</th>
                 <th>Status</th>
                 <th>Joined</th>
                 <th class="text-right">Actions</th>
@@ -173,8 +174,29 @@
                   <td>
                     <div class="contact-stack">
                       <span>{{ cust.phone || 'No phone recorded' }}</span>
-                      <span class="provider-tag font-mono">Provider: {{ cust.oauth_provider }}</span>
                     </div>
+                  </td>
+
+                  <td>
+                    @if (cust.oauth_provider === 'google') {
+                      <span class="provider-pill provider-google" title="Signed in with Google OAuth">
+                        <svg class="provider-icon" viewBox="0 0 24 24" width="14" height="14">
+                          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"/>
+                          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.26 21.36 7.33 24 12 24z"/>
+                          <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.18 0 9.99 0 12s.46 3.82 1.26 5.42l4.02-3.13z"/>
+                          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96z"/>
+                        </svg>
+                        <span>Google</span>
+                      </span>
+                    } @else {
+                      <span class="provider-pill provider-local" title="Local Email & Password Account">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span>Email / Local</span>
+                      </span>
+                    }
                   </td>
 
                   <td>
@@ -518,6 +540,24 @@
               <div class="meta-row">
                 <span class="meta-label">Customer ID:</span>
                 <span class="meta-val">{{ selectedCustomer()?.user_id }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Auth Provider:</span>
+                <span class="meta-val">
+                  @if (selectedCustomer()?.oauth_provider === 'google') {
+                    <span class="provider-pill-sm provider-google">
+                      <svg viewBox="0 0 24 24" width="11" height="11">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.26 21.36 7.33 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.18 0 9.99 0 12s.46 3.82 1.26 5.42l4.02-3.13z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96z"/>
+                      </svg>
+                      Google OAuth
+                    </span>
+                  } @else {
+                    <span class="provider-pill-sm provider-local">Email & Password</span>
+                  }
+                </span>
               </div>
               <div class="meta-row" *ngIf="phone">
                 <span class="meta-label">Phone:</span>
