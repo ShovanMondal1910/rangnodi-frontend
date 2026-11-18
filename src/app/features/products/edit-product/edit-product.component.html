@@ -1,0 +1,785 @@
+<div class="edit-product-container">
+  <!-- Top Navigation & Header -->
+  <header class="page-header">
+    <div class="header-top-row">
+      <div class="header-left">
+        <a routerLink="/catalog" class="back-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Catalog
+        </a>
+        <div class="title-with-badge">
+          <h1 class="page-title">{{ productId ? 'Edit Product: ' + (title || 'Details') : 'Edit Product' }}</h1>
+          @if (productId) {
+            <span class="id-badge font-mono">ID: {{ productId }}</span>
+          }
+        </div>
+        <p class="page-subtitle">Search any product to edit its details, update prices, manage inventory, or change photos.</p>
+      </div>
+
+      <!-- SEARCH BAR IN HEADER -->
+      <div class="search-bar-wrapper">
+        <div class="search-input-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search product by title, SKU, or ID..."
+            [ngModel]="searchQuery()"
+            (ngModelChange)="onSearchChange($event)"
+            (focus)="onSearchFocus()"
+            (blur)="closeSearchDropdown()"
+          />
+
+          @if (isSearching()) {
+            <div class="search-mini-spinner"></div>
+          } @else if (searchQuery()) {
+            <button type="button" class="search-clear-btn" (click)="onSearchChange('')">&times;</button>
+          }
+        </div>
+
+        <!-- SEARCH RESULTS DROPDOWN -->
+        @if (showSearchDropdown()) {
+          <div class="search-dropdown">
+            @if (searchResults().length === 0) {
+              <div class="search-no-results">
+                <span>No products found matching "{{ searchQuery() }}"</span>
+              </div>
+            } @else {
+              <div class="search-dropdown-header">
+                <span>FOUND {{ searchResults().length }} PRODUCTS</span>
+              </div>
+              <ul class="search-results-list">
+                @for (item of searchResults(); track item.product_id) {
+                  <li class="search-result-item" (mousedown)="selectProduct(item)">
+                    <div class="result-thumb-box">
+                      @if (item.has_main_image) {
+                        <img [src]="'/api/v1/products/' + item.product_id + '/main-image'" alt="" class="result-thumb" />
+                      } @else {
+                        <div class="result-thumb-placeholder">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                          </svg>
+                        </div>
+                      }
+                    </div>
+
+                    <div class="result-info">
+                      <div class="result-title-row">
+                        <span class="result-title">{{ item.title }}</span>
+                        <span class="result-status-badge" [class]="'badge-' + item.status">{{ item.status }}</span>
+                      </div>
+                      <div class="result-meta-row font-mono">
+                        <span class="meta-sku">{{ item.sku || 'No SKU' }}</span>
+                        <span class="meta-dot">•</span>
+                        <span class="meta-cat">{{ item.category_name || 'Category' }}</span>
+                        <span class="meta-dot">•</span>
+                        <span class="meta-price">৳{{ (item.sale_price || item.regular_price) | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="result-action">
+                      <span class="action-pill">Edit &rarr;</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading product details...</p>
+    </div>
+  } @else if (!productId) {
+    <!-- NO PRODUCT SELECTED STATE -->
+    <div class="no-selection-card">
+      <div class="empty-icon-circle">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <h2 class="empty-title">Select a Product to Edit</h2>
+      <p class="empty-subtitle">Use the search bar above or choose from recent products below to start editing.</p>
+
+      @if (recentProducts().length > 0) {
+        <div class="recent-products-section">
+          <h3 class="recent-heading">Recent Products</h3>
+          <div class="recent-grid">
+            @for (p of recentProducts(); track p.product_id) {
+              <div class="recent-card" (click)="selectProduct(p)">
+                <div class="recent-thumb-wrap">
+                  @if (p.has_main_image) {
+                    <img [src]="'/api/v1/products/' + p.product_id + '/main-image'" alt="" class="recent-thumb" />
+                  } @else {
+                    <div class="recent-thumb-placeholder">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.75">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
+                  }
+                </div>
+                <div class="recent-info">
+                  <span class="recent-cat font-mono">{{ p.category_name || 'CATEGORY' }}</span>
+                  <h4 class="recent-title">{{ p.title }}</h4>
+                  <div class="recent-pricing">
+                    <span class="recent-price">৳{{ (p.sale_price || p.regular_price) | number:'1.2-2' }}</span>
+                    <span class="recent-sku font-mono">{{ p.sku }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- MAIN EDIT CONTENT GRID -->
+    <div class="content-grid">
+      <!-- LEFT COLUMN: Forms -->
+      <div class="left-column">
+        
+        <!-- Card 1: Product Overview -->
+        <section class="card">
+          <div class="card-header">
+            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <h2 class="card-title">Product Overview</h2>
+          </div>
+
+          <div class="card-body">
+            <!-- Product Title -->
+            <div class="form-group">
+              <label class="form-label">Product Title <span class="required">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. Midnight Crimson Embroidered Panjabi"
+                [(ngModel)]="title"
+                (input)="onTitleInput()"
+              />
+            </div>
+
+            <!-- SEO Slug & SKU Code -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">SEO Slug</label>
+                <input
+                  type="text"
+                  class="form-control font-mono"
+                  placeholder="auto-generated-from-title"
+                  [(ngModel)]="slug"
+                  (input)="onSlugManualEdit()"
+                />
+                <span class="helper-text">URL friendly link on store catalog</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">SKU Code</label>
+                <div class="input-with-btn">
+                  <input
+                    type="text"
+                    class="form-control font-mono"
+                    placeholder="e.g. RNG-MEN-101"
+                    [(ngModel)]="sku"
+                  />
+                  <button type="button" class="btn btn-outline btn-sm" (click)="generateSku()">
+                    Generate
+                  </button>
+                </div>
+                <span class="helper-text">Stock Keeping Unit identifier</span>
+              </div>
+            </div>
+
+            <!-- Category, Group Name, Subcategory (Cascaded from Database) -->
+            <div class="form-row-3">
+              <!-- Category -->
+              <div class="form-group">
+                <label class="form-label">Category <span class="required">*</span></label>
+                <select
+                  class="form-control"
+                  [ngModel]="selectedCategoryId()"
+                  (ngModelChange)="onCategoryChange($event)"
+                >
+                  <option value="" disabled>Select Category...</option>
+                  @for (cat of categories(); track cat.category_id) {
+                    <option [value]="cat.category_id">{{ cat.name }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Group Name -->
+              <div class="form-group">
+                <label class="form-label">Group Name</label>
+                <select
+                  class="form-control"
+                  [ngModel]="selectedGroupName()"
+                  (ngModelChange)="onGroupChange($event)"
+                  [disabled]="!selectedCategoryId()"
+                >
+                  <option value="">{{ selectedCategoryId() ? 'All Groups' : 'Select Category First...' }}</option>
+                  @for (grp of availableGroupNames(); track grp) {
+                    <option [value]="grp">{{ grp }}</option>
+                  }
+                </select>
+                <span class="helper-text">Filters subcategories by group</span>
+              </div>
+
+              <!-- Subcategory -->
+              <div class="form-group">
+                <label class="form-label">Subcategory <span class="required">*</span></label>
+                <select
+                  class="form-control"
+                  [ngModel]="selectedSubcategoryId()"
+                  (ngModelChange)="selectedSubcategoryId.set($event)"
+                  [disabled]="!selectedCategoryId()"
+                >
+                  <option value="" disabled>{{ selectedCategoryId() ? 'Select Subcategory...' : 'Select Category First...' }}</option>
+                  @for (sub of availableSubcategories(); track sub.subcategory_id) {
+                    <option [value]="sub.subcategory_id">{{ sub.name }}</option>
+                  }
+                </select>
+                <span class="helper-text">Choose specific subcategory</span>
+              </div>
+            </div>
+
+            <!-- Brand & Short Summary -->
+            <div class="form-row-2">
+              <div class="form-group brand-field">
+                <label class="form-label">Brand</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Rangnodi"
+                  [(ngModel)]="brand"
+                />
+              </div>
+
+              <div class="form-group summary-field">
+                <label class="form-label">Short Summary</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Brief 1-line highlight shown on product cards..."
+                  [(ngModel)]="shortDescription"
+                />
+              </div>
+            </div>
+
+            <!-- Full Description & Specifications -->
+            <div class="form-group">
+              <label class="form-label">Full Description & Specifications</label>
+              <textarea
+                class="form-control"
+                rows="4"
+                placeholder="Detail the fabric composition, fit, styling advice, warranty, and care guide..."
+                [(ngModel)]="description"
+              ></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 2: Pricing & Inventory -->
+        <section class="card">
+          <div class="card-header">
+            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <h2 class="card-title">Pricing & Inventory</h2>
+          </div>
+
+          <div class="card-body">
+            <!-- Prices -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Regular Retail Price (৳) <span class="required">*</span></label>
+                <div class="currency-input-wrap">
+                  <span class="currency-prefix">৳</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="3850.00"
+                    [(ngModel)]="regularPrice"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Special Offer / Sale Price (৳)</label>
+                <div class="currency-input-wrap">
+                  <span class="currency-prefix">৳</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="2990.00"
+                    [(ngModel)]="salePrice"
+                    step="0.01"
+                  />
+                </div>
+                <span class="helper-text">Leave empty if selling at regular price</span>
+              </div>
+            </div>
+
+            <!-- Stock, Threshold, Status -->
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label">Warehouse Stock Qty</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="20"
+                  [(ngModel)]="warehouseStockQty"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Low Stock Alert</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="5"
+                  [(ngModel)]="lowStockAlert"
+                />
+                <span class="helper-text">Shows 'Only X left' warning</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Stock Status</label>
+                <select class="form-control" [(ngModel)]="stockStatus">
+                  <option value="in_stock">In Stock</option>
+                  <option value="out_of_stock">Out of Stock</option>
+                  <option value="pre_order">Pre Order</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Limits & Shipping weight -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Max Purchase Limit (Per Order)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="5"
+                  [(ngModel)]="maxPurchaseLimit"
+                />
+                <span class="helper-text">Anti-scalping safeguard for campaign deals</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Weight (kg)</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="0.50"
+                  [(ngModel)]="weightKg"
+                  step="0.05"
+                />
+                <span class="helper-text">For Pathao / Steadfast courier fees</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 3: Variants, Sizes & Search Tags -->
+        <section class="card">
+          <div class="card-header">
+            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <h2 class="card-title">Variants, Sizes & Search Tags</h2>
+          </div>
+
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Available Sizes</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. S, M, L, XL, XXL or 38, 40, 42, 44"
+                [(ngModel)]="availableSizes"
+              />
+              <span class="helper-text">Separate with commas</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Color Options</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. Midnight Crimson, Navy Blue, Snow White"
+                [(ngModel)]="colorOptions"
+              />
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Search Keywords / Tags</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="panjabi, eid, festive, cotton"
+                  [(ngModel)]="searchKeywords"
+                />
+                <span class="helper-text">Powers the navbar search dropdown</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Warranty / Return Policy</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="7-Day Easy Replacement"
+                  [(ngModel)]="warrantyPeriod"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 4: Media & Image Upload (Binary Storage) -->
+        <section class="card">
+          <div class="card-header">
+            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <h2 class="card-title">Media & Image Upload (Binary Storage)</h2>
+          </div>
+
+          <div class="card-body">
+            <!-- Main Showcase Image -->
+            <div class="form-group">
+              <label class="form-label">Main Product Image <span class="required">*</span></label>
+              
+              <input
+                #mainFileInput
+                type="file"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                class="hidden-file-input"
+                (change)="onMainImageSelect($event)"
+              />
+
+              @if (mainImagePreview()) {
+                <div class="image-preview-box">
+                  <img [src]="mainImagePreview()" alt="Main Product Preview" class="preview-img" />
+                  <div class="preview-details">
+                    <span class="preview-filename">{{ mainImageFile?.name || 'Showcase Photo (Saved in PostgreSQL BYTEA)' }}</span>
+                    <span class="preview-filesize font-mono">Binary Image Active</span>
+                  </div>
+                  <div class="preview-actions">
+                    <button type="button" class="btn btn-outline btn-sm" (click)="mainFileInput.click()">
+                      Replace
+                    </button>
+                    <button type="button" class="btn-remove" (click)="removeMainImage()" title="Remove photo">
+                      &times;
+                    </button>
+                  </div>
+                </div>
+              } @else {
+                <div
+                  class="dropzone"
+                  [class.dropzone-active]="isMainImageDragging()"
+                  (dragover)="onMainImageDragOver($event)"
+                  (dragleave)="onMainImageDragLeave($event)"
+                  (drop)="onMainImageDrop($event)"
+                  (click)="mainFileInput.click()"
+                >
+                  <div class="dropzone-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </div>
+                  <p class="dropzone-text">
+                    <strong>Drag & drop your product image here</strong> or <span class="browse-link">browse files</span>
+                  </p>
+                  <p class="dropzone-subtext">Supports PNG, JPG, JPEG, WEBP • Saved directly as binary data in PostgreSQL</p>
+                </div>
+              }
+            </div>
+
+            <!-- Additional Gallery Photos -->
+            <div class="form-group">
+              <label class="form-label">Additional Gallery Photos</label>
+
+              <!-- Existing Gallery Photos from DB -->
+              @if (existingGalleryImages().length > 0) {
+                <div class="gallery-section-label">Currently Saved Gallery Photos:</div>
+                <div class="gallery-strip">
+                  @for (img of existingGalleryImages(); track img.image_id) {
+                    <div class="gallery-thumb-item">
+                      <img [src]="img.image_url" alt="Gallery photo" class="gallery-thumb-img" />
+                      <button type="button" class="thumb-remove" (click)="deleteExistingGalleryImage(img.image_id)" title="Delete photo from DB">
+                        &times;
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- Upload New Gallery Photos -->
+              <input
+                #galleryFileInput
+                type="file"
+                multiple
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                class="hidden-file-input"
+                (change)="onNewGallerySelect($event)"
+              />
+
+              <div
+                class="dropzone dropzone-compact"
+                style="margin-top: 12px;"
+                [class.dropzone-active]="isGalleryDragging()"
+                (dragover)="onNewGalleryDragOver($event)"
+                (dragleave)="onNewGalleryDragLeave($event)"
+                (drop)="onNewGalleryDrop($event)"
+                (click)="galleryFileInput.click()"
+              >
+                <div class="dropzone-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                </div>
+                <p class="dropzone-text">
+                  <strong>Add more gallery photos</strong> or <span class="browse-link">click to browse</span>
+                </p>
+              </div>
+
+              <!-- New Gallery Previews -->
+              @if (newGalleryImages().length > 0) {
+                <div class="gallery-section-label" style="margin-top: 8px;">New Photos To Upload:</div>
+                <div class="gallery-strip">
+                  @for (img of newGalleryImages(); track img.id; let idx = $index) {
+                    <div class="gallery-thumb-item">
+                      <img [src]="img.previewUrl" alt="New Gallery preview" class="gallery-thumb-img" />
+                      <button type="button" class="thumb-remove" (click)="removeNewGalleryImage(idx)" title="Remove photo">
+                        &times;
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: Visibility, Preview & Actions -->
+      <div class="right-column">
+        
+        <!-- Card: Visibility & Status -->
+        <section class="card">
+          <div class="card-header">
+            <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <h2 class="card-title">Visibility & Status</h2>
+          </div>
+
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">Publish Status</label>
+              <select class="form-control" [(ngModel)]="publishStatus">
+                <option value="active">Active (Live in store)</option>
+                <option value="inactive">Inactive</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Product Card Badge</label>
+              <select class="form-control" [(ngModel)]="cardBadge">
+                <option value="">No Badge</option>
+                <option value="HOT">HOT</option>
+                <option value="NEW">NEW</option>
+                <option value="SALE">SALE</option>
+                <option value="LIMITED">LIMITED</option>
+                <option value="TRENDING">TRENDING</option>
+              </select>
+            </div>
+
+            <!-- Switch: Featured Product -->
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Featured Product</span>
+                <span class="switch-desc">Showcase on homepage hero grid</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="isFeatured" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Switch: Free Shipping -->
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Free Shipping</span>
+                <span class="switch-desc">Display free delivery badge</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="freeShipping" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Switch: Cash on Delivery -->
+            <div class="switch-row">
+              <div class="switch-info">
+                <span class="switch-title">Cash on Delivery</span>
+                <span class="switch-desc">Allow COD payment at doorstep</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" [(ngModel)]="cashOnDelivery" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Flash Deal Expiration -->
+            <div class="form-group" style="margin-top: 14px;">
+              <label class="form-label">Flash Deal Expiration</label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                [(ngModel)]="flashDealExpiration"
+              />
+              <span class="helper-text">Shows live countdown timer if active</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card: Live Store Preview -->
+        <section class="card preview-card">
+          <div class="card-header preview-header">
+            <div class="preview-title-box">
+              <svg class="card-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <h2 class="card-title">Live Store Preview</h2>
+            </div>
+            <span class="live-badge">REAL-TIME</span>
+          </div>
+
+          <div class="card-body preview-body">
+            <div class="store-product-card">
+              <div class="store-img-box">
+                @if (mainImagePreview()) {
+                  <img [src]="mainImagePreview()" alt="Product image preview" class="store-img" />
+                } @else {
+                  <div class="store-img-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                      <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <span>Upload Showcase Image</span>
+                  </div>
+                }
+                @if (cardBadge) {
+                  <span class="store-badge">{{ cardBadge }}</span>
+                }
+              </div>
+
+              <div class="store-content">
+                <span class="store-category font-mono">
+                  {{ selectedCategory()?.name || 'CATEGORY' }}
+                </span>
+                <h3 class="store-title">
+                  {{ title || 'Your Product Title Will Appear Here' }}
+                </h3>
+                
+                <div class="store-pricing">
+                  @if (salePrice && salePrice > 0 && regularPrice && salePrice < regularPrice) {
+                    <span class="store-price-sale">৳{{ salePrice | number:'1.2-2' }}</span>
+                    <span class="store-price-regular strike">৳{{ regularPrice | number:'1.2-2' }}</span>
+                  } @else {
+                    <span class="store-price-current">৳{{ (regularPrice || 0) | number:'1.2-2' }}</span>
+                  }
+                </div>
+
+                <div class="store-stock-status">
+                  <span class="stock-dot" [class.dot-green]="stockStatus === 'in_stock'" [class.dot-red]="stockStatus === 'out_of_stock'" [class.dot-orange]="stockStatus === 'pre_order'"></span>
+                  <span class="stock-label">
+                    @if (stockStatus === 'in_stock') { In Stock }
+                    @else if (stockStatus === 'out_of_stock') { Out of Stock }
+                    @else { Pre Order }
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-box">
+          <button
+            type="button"
+            class="btn btn-save"
+            [disabled]="isSaving() || isDeleting()"
+            (click)="updateProduct()"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            {{ isSaving() ? 'Updating Product...' : 'Update Product' }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-draft"
+            [disabled]="isSaving() || isDeleting()"
+            (click)="updateProduct('draft')"
+          >
+            Save as Inactive Draft
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-danger"
+            [disabled]="isSaving() || isDeleting()"
+            (click)="deleteProduct()"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            {{ isDeleting() ? 'Deleting...' : 'Delete Product' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

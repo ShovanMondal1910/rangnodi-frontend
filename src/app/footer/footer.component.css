@@ -1,0 +1,289 @@
+/* ==========================================================================
+   Rangnodi Footer Component Styling (Precision match with design screenshot)
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  border-top: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-footer {
+  width: 100%;
+  position: relative;
+}
+
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ----------------------------------------------------
+   1. TOP MULTI-COLUMN SECTION
+   ---------------------------------------------------- */
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr 1.55fr;
+  gap: 36px;
+  padding: 44px 0 32px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Column 1: Brand & Contacts */
+.footer-logo-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.brand-description {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 16px 0;
+  max-width: 320px;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #334155;
+  font-size: 0.8125rem;
+  transition: color 0.15s ease;
+}
+
+.contact-item:hover {
+  color: #dc2626;
+}
+
+.contact-icon-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.socials-box {
+  margin-top: 4px;
+}
+
+.socials-heading {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.social-icons-row {
+  display: flex;
+  gap: 8px;
+}
+
+.social-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.social-circle:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background-color: #fef2f2;
+  transform: translateY(-2px);
+}
+
+/* Columns 2 & 3: Navigation Links */
+.col-title {
+  font-size: 0.825rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-bar {
+  color: #dc2626;
+  font-weight: 900;
+}
+
+.footer-link-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-link {
+  font-size: 0.8125rem;
+  color: #475569;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footer-link:hover {
+  color: #dc2626;
+}
+
+/* Column 4: Physical Store Location Cards */
+.store-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.store-card:last-child {
+  margin-bottom: 0;
+}
+
+.store-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.store-name {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.store-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.badge-off {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+}
+
+.store-address {
+  font-size: 0.735rem;
+  color: #64748b;
+  margin: 0 0 4px 0;
+  line-height: 1.35;
+}
+
+.store-address.sub-loc {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed #f1f5f9;
+}
+
+.store-hotline {
+  font-size: 0.75rem;
+  color: #1e293b;
+  margin: 0;
+}
+
+.store-hotline strong {
+  color: #0f172a;
+}
+
+/* ----------------------------------------------------
+   2. BOTTOM COPYRIGHT & GIANT WATERMARK
+   ---------------------------------------------------- */
+.footer-bottom-section {
+  position: relative;
+  padding: 20px 0 36px;
+  text-align: center;
+}
+
+.copyright-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Giant Subtle Watermark */
+.footer-watermark {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 6.5rem;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.03);
+  letter-spacing: 0.16em;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .footer-watermark {
+    font-size: 3.5rem;
+    bottom: -10px;
+  }
+}

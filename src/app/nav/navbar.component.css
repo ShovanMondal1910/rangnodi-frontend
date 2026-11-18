@@ -1,0 +1,493 @@
+/* ==========================================================================
+   Rangnodi Store Navbar & Mega Menu Styling
+   ========================================================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  z-index: 1000;
+  background-color: #ffffff;
+}
+
+.navbar-wrapper {
+  width: 100%;
+  background: #ffffff;
+  position: relative;
+}
+
+.nav-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ----------------------------------------------------
+   1. TOP UTILITY BAR
+   ---------------------------------------------------- */
+.top-utility-bar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.725rem;
+  color: #64748b;
+}
+
+.top-utility-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 32px;
+}
+
+.top-left-slogan {
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.02em;
+}
+
+.top-right-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-link {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.top-link:hover {
+  color: #dc2626;
+}
+
+.top-divider {
+  color: #cbd5e1;
+  font-size: 0.7rem;
+}
+
+/* ----------------------------------------------------
+   2. MAIN NAVIGATION BAR
+   ---------------------------------------------------- */
+.main-nav-bar {
+  padding: 16px 0;
+  background: #ffffff;
+}
+
+.main-nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Brand Logo */
+.brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-emblem {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.brand-name {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+/* Search Pill Box */
+.search-pill-box {
+  flex: 1;
+  max-width: 540px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  height: 42px;
+  padding: 0 4px 0 16px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.search-form:focus-within {
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  background-color: #ffffff;
+}
+
+.search-pill-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.84rem;
+  color: #0f172a;
+  outline: none;
+  min-width: 0;
+}
+
+.search-pill-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Search Category Dropdown */
+.search-category-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid #e2e8f0;
+  height: 24px;
+  padding-left: 12px;
+  margin-right: 4px;
+}
+
+.category-picker-btn {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0 6px;
+  outline: none;
+}
+
+.category-picker-btn:hover {
+  color: #0f172a;
+}
+
+.category-picker-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 1001;
+  padding: 4px 0;
+}
+
+.category-picker-item {
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.category-picker-item:hover {
+  background-color: #f1f5f9;
+  color: #dc2626;
+}
+
+.search-submit-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.search-submit-btn:hover {
+  color: #dc2626;
+}
+
+/* Nav Right Contact & Icons */
+.nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.call-us-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding-right: 12px;
+  border-right: 1px solid #e2e8f0;
+}
+
+.phone-circle-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+}
+
+.call-us-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.call-subtitle {
+  font-size: 0.6875rem;
+  color: #64748b;
+}
+
+.call-number {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.nav-action-icon {
+  color: #0f172a;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.nav-action-icon:hover {
+  color: #dc2626;
+}
+
+/* ----------------------------------------------------
+   3. CATEGORY NAVIGATION ROW
+   ---------------------------------------------------- */
+.category-nav-bar {
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.category-nav-container {
+  display: flex;
+  justify-content: center;
+}
+
+.category-menu-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.category-menu-item {
+  position: relative;
+  padding: 12px 2px 14px;
+  cursor: pointer;
+}
+
+.category-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+}
+
+.category-menu-item:hover .category-nav-link,
+.category-menu-item.item-active .category-nav-link {
+  color: #0f172a;
+}
+
+/* Category Badges (HOT, NEW) */
+.nav-badge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  padding: 2px 5px;
+  border-radius: 4px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.badge-hot,
+.badge-new {
+  background-color: #dc2626;
+}
+
+/* Active Underline Indicator */
+.active-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background-color: #0f172a;
+  transform: scaleX(0);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-menu-item:hover .active-indicator,
+.indicator-visible {
+  transform: scaleX(1);
+}
+
+/* ----------------------------------------------------
+   4. EXPANDABLE MEGA MENU PANEL
+   ---------------------------------------------------- */
+.mega-menu-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+  z-index: 999;
+  padding: 32px 0 44px;
+  animation: megaMenuSlideDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes megaMenuSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mega-menu-container {
+  padding: 0 32px;
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 36px 48px;
+}
+
+.mega-group-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.mega-group-title {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 16px 0;
+}
+
+.mega-sub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mega-sub-item {
+  margin: 0;
+}
+
+.mega-sub-link {
+  font-size: 0.8125rem;
+  color: #475569;
+  text-decoration: none;
+  transition: color 0.15s ease, transform 0.15s ease;
+  display: inline-block;
+}
+
+.mega-sub-link:hover {
+  color: #dc2626;
+  transform: translateX(2px);
+}
+
+.mega-menu-empty {
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* ----------------------------------------------------
+   5. RESPONSIVE MEDIA QUERIES
+   ---------------------------------------------------- */
+@media (max-width: 992px) {
+  .top-utility-bar {
+    display: none;
+  }
+
+  .call-us-pill {
+    display: none;
+  }
+
+  .search-pill-box {
+    max-width: 320px;
+  }
+
+  .category-menu-list {
+    gap: 16px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+
+  .main-nav-content {
+    flex-wrap: wrap;
+  }
+
+  .search-pill-box {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .category-menu-list {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding-bottom: 8px;
+  }
+}
