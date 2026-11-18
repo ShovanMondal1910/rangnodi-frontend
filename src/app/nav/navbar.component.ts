@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, HostListener } from '@angular/core';
+import { Component, OnInit, inject, signal, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -6,6 +6,7 @@ import { CatalogService } from '../core/services/catalog.service';
 import { AuthService } from '../core/services/auth.service';
 import { CartService } from '../core/services/cart.service';
 import { CategoryHierarchyItem, Subcategory } from '../core/models/catalog.models';
+import $ from 'jquery';
 
 export interface GroupedSubcategories {
   groupName: string;
@@ -86,15 +87,15 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  @ViewChild('megaMenuPanel') megaMenuPanel?: ElementRef<HTMLElement>;
+
   // Hover / Mouse interactions
   onCategoryEnter(cat: CategoryHierarchyItem): void {
     this.clearCloseTimer();
-    this.activeCategory.set(cat);
-    // Only open mega menu if category has subcategories
-    if (cat.subcategories && cat.subcategories.length > 0) {
-      this.isMegaMenuOpen.set(true);
+    if (this.isMegaMenuOpen()) {
+      this.switchCategory(cat);
     } else {
-      this.isMegaMenuOpen.set(false);
+      this.openMegaMenu(cat);
     }
   }
 
@@ -110,26 +111,120 @@ export class NavbarComponent implements OnInit {
     this.scheduleCloseMenu();
   }
 
-  // Touch support for tablets/mobile
-  onCategoryTouch(cat: CategoryHierarchyItem, event: Event): void {
-    if (cat.subcategories && cat.subcategories.length > 0) {
-      if (this.activeCategory()?.category_id === cat.category_id && this.isMegaMenuOpen()) {
-        this.isMegaMenuOpen.set(false);
-        this.activeCategory.set(null);
-      } else {
-        event.preventDefault();
-        this.activeCategory.set(cat);
-        this.isMegaMenuOpen.set(true);
-      }
+  // Press / Click on a category in the navigation bar to expand its groups and subcategories
+  onCategoryPress(cat: CategoryHierarchyItem, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.activeCategory()?.category_id === cat.category_id && this.isMegaMenuOpen()) {
+      this.closeMegaMenu();
+      return;
     }
+
+    this.clearCloseTimer();
+    this.openMegaMenu(cat);
+  }
+
+  openMegaMenu(cat: CategoryHierarchyItem): void {
+    this.activeCategory.set(cat);
+    this.isMegaMenuOpen.set(true);
+
+    setTimeout(() => {
+      if (!this.megaMenuPanel) return;
+      const $panel = $(this.megaMenuPanel.nativeElement);
+      $panel.stop(true, true);
+      $panel.css({ opacity: 0 });
+      $panel.slideDown({
+        duration: 260,
+        easing: 'swing',
+      }).animate({ opacity: 1 }, { queue: false, duration: 220 });
+
+      // Staggered cascade entrance for groups via jQuery
+      $panel.find('.mega-group-column').each((idx, el) => {
+        $(el).css({ opacity: 0, transform: 'translateY(8px)' })
+          .delay(30 + idx * 30)
+          .animate({ opacity: 1, transform: 'translateY(0px)' }, 160);
+      });
+
+      // Pure touch & hover feedback animation via jQuery
+      this.attachTouchAnimations($panel);
+    }, 10);
+  }
+
+  switchCategory(cat: CategoryHierarchyItem): void {
+    if (this.activeCategory()?.category_id === cat.category_id) return;
+    if (!this.megaMenuPanel) {
+      this.activeCategory.set(cat);
+      return;
+    }
+
+    const $panel = $(this.megaMenuPanel.nativeElement);
+    $panel.find('.mega-columns-grid').stop(true, true).animate(
+      { opacity: 0.25 },
+      80,
+      () => {
+        this.activeCategory.set(cat);
+        setTimeout(() => {
+          $panel.find('.mega-columns-grid').animate({ opacity: 1 }, 160);
+          $panel.find('.mega-group-column').each((idx, el) => {
+            $(el).css({ opacity: 0, transform: 'translateY(6px)' })
+              .delay(idx * 20)
+              .animate({ opacity: 1, transform: 'translateY(0px)' }, 140);
+          });
+          this.attachTouchAnimations($panel);
+        }, 10);
+      }
+    );
+  }
+
+  private attachTouchAnimations($panel: JQuery<HTMLElement>): void {
+    $panel.find('.mega-sub-link')
+      .off('mouseenter mouseleave touchstart touchend mousedown mouseup')
+      .on('mouseenter', function() {
+        $(this).stop(true, true).animate({ paddingLeft: '3px' }, 80);
+      })
+      .on('mouseleave', function() {
+        $(this).stop(true, true).animate({ paddingLeft: '0px' }, 80);
+      })
+      .on('touchstart mousedown', function() {
+        $(this).stop(true, true).animate({ opacity: 0.5 }, 50);
+      })
+      .on('touchend mouseup', function() {
+        $(this).stop(true, true).animate({ opacity: 1 }, 80);
+      });
+  }
+
+  closeMegaMenu(): void {
+    this.clearCloseTimer();
+    if (!this.megaMenuPanel || !this.isMegaMenuOpen()) {
+      this.isMegaMenuOpen.set(false);
+      this.activeCategory.set(null);
+      return;
+    }
+
+    const $panel = $(this.megaMenuPanel.nativeElement);
+    $panel.stop(true, true).animate(
+      { opacity: 0 },
+      130,
+      () => {
+        $panel.slideUp(170, () => {
+          $panel.css({ display: 'none' });
+          this.isMegaMenuOpen.set(false);
+          this.activeCategory.set(null);
+        });
+      }
+    );
+  }
+
+  getTotalSubcategoryCount(cat: CategoryHierarchyItem | null): number {
+    return cat?.subcategories?.length || 0;
   }
 
   private scheduleCloseMenu(): void {
     this.clearCloseTimer();
     this.closeMenuTimer = setTimeout(() => {
-      this.isMegaMenuOpen.set(false);
-      this.activeCategory.set(null);
-    }, 150);
+      this.closeMegaMenu();
+    }, 280);
   }
 
   private clearCloseTimer(): void {
@@ -139,7 +234,7 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  // Group subcategories by group_name
+  // Group subcategories by group_name and preserve sorted group order
   getGroupedSubcategories(cat: CategoryHierarchyItem | null): GroupedSubcategories[] {
     if (!cat || !cat.subcategories || cat.subcategories.length === 0) return [];
 
@@ -152,15 +247,19 @@ export class NavbarComponent implements OnInit {
       map.get(group)!.push(sub);
     });
 
-    return Array.from(map.entries()).map(([groupName, items]) => ({
-      groupName,
-      items: items.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0)),
-    }));
+    return Array.from(map.entries())
+      .map(([groupName, items]) => {
+        const sortedItems = items.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+        const minOrder = sortedItems.length > 0 ? (sortedItems[0].sort_order ?? 999) : 999;
+        return { groupName, items: sortedItems, minOrder };
+      })
+      .sort((a, b) => a.minOrder - b.minOrder)
+      .map(({ groupName, items }) => ({ groupName, items }));
   }
 
   onSearchSubmit(): void {
     if (this.searchQuery.trim()) {
-      this.router.navigate(['/products/edit'], {
+      this.router.navigate(['/catalog'], {
         queryParams: { search: this.searchQuery.trim() },
       });
     }
@@ -176,6 +275,9 @@ export class NavbarComponent implements OnInit {
     const target = event.target as HTMLElement;
     if (!target.closest('.search-category-dropdown')) {
       this.showCategoryPicker = false;
+    }
+    if (!target.closest('.category-nav-bar') && !target.closest('.mega-menu-overlay')) {
+      this.closeMegaMenu();
     }
   }
 }

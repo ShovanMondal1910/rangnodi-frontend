@@ -117,18 +117,9 @@
       </div>
 
       <!-- Customers Dropdown -->
-      <div
-        class="nav-dropdown-wrap"
-        (mouseenter)="openCustomerMenu()"
-        (mouseleave)="closeCustomerMenu()"
-      >
-        <button
-          type="button"
-          class="admin-nav-item dropdown-btn"
-          [class.active-pill]="isCustomerActive()"
-          (click)="toggleCustomerMenu()"
-          (touchstart)="toggleCustomerMenu()"
-        >
+      <div class="nav-dropdown-wrap" (mouseenter)="openCustomerMenu()" (mouseleave)="closeCustomerMenu()">
+        <button type="button" class="admin-nav-item dropdown-btn" [class.active-pill]="isCustomerActive()"
+          (click)="toggleCustomerMenu()" (touchstart)="toggleCustomerMenu()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
@@ -136,27 +127,15 @@
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
           <span>Customers</span>
-          <svg
-            class="chevron-icon"
-            [class.rotate-chevron]="isCustomerMenuOpen()"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
+          <svg class="chevron-icon" [class.rotate-chevron]="isCustomerMenuOpen()" width="12" height="12"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
 
         <!-- Dropdown Menu -->
         <div class="nav-dropdown-menu" [class.show-menu]="isCustomerMenuOpen()">
-          <a
-            routerLink="/admin/customers/add"
-            class="dropdown-link"
-            (click)="closeCustomerMenu()"
-          >
+          <a routerLink="/admin/customers/add" class="dropdown-link" (click)="closeCustomerMenu()">
             <div class="link-icon-wrap plus-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -169,11 +148,7 @@
             </div>
           </a>
 
-          <a
-            routerLink="/admin/customers/edit"
-            class="dropdown-link"
-            (click)="closeCustomerMenu()"
-          >
+          <a routerLink="/admin/customers/edit" class="dropdown-link" (click)="closeCustomerMenu()">
             <div class="link-icon-wrap edit-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -200,18 +175,9 @@
       </a>
 
       <!-- Admins Dropdown -->
-      <div
-        class="nav-dropdown-wrap"
-        (mouseenter)="openAdminMenu()"
-        (mouseleave)="closeAdminMenu()"
-      >
-        <button
-          type="button"
-          class="admin-nav-item dropdown-btn"
-          [class.active-pill]="isAdminsActive()"
-          (click)="toggleAdminMenu()"
-          (touchstart)="toggleAdminMenu()"
-        >
+      <div class="nav-dropdown-wrap" (mouseenter)="openAdminMenu()" (mouseleave)="closeAdminMenu()">
+        <button type="button" class="admin-nav-item dropdown-btn" [class.active-pill]="isAdminsActive()"
+          (click)="toggleAdminMenu()" (touchstart)="toggleAdminMenu()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
             <circle cx="9" cy="7" r="4"></circle>
@@ -219,27 +185,15 @@
             <line x1="22" y1="11" x2="16" y2="11"></line>
           </svg>
           <span>Admins</span>
-          <svg
-            class="chevron-icon"
-            [class.rotate-chevron]="isAdminMenuOpen()"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
+          <svg class="chevron-icon" [class.rotate-chevron]="isAdminMenuOpen()" width="12" height="12"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
 
         <!-- Dropdown Menu -->
         <div class="nav-dropdown-menu" [class.show-menu]="isAdminMenuOpen()">
-          <a
-            routerLink="/admin/add"
-            class="dropdown-link"
-            (click)="closeAdminMenu()"
-          >
+          <a routerLink="/admin/add" class="dropdown-link" (click)="closeAdminMenu()">
             <div class="link-icon-wrap user-add-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -254,11 +208,7 @@
             </div>
           </a>
 
-          <a
-            routerLink="/admin/edit"
-            class="dropdown-link"
-            (click)="closeAdminMenu()"
-          >
+          <a routerLink="/admin/edit" class="dropdown-link" (click)="closeAdminMenu()">
             <div class="link-icon-wrap user-edit-icon">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>

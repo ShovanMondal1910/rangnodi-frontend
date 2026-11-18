@@ -3,7 +3,7 @@
   <app-hero-slider></app-hero-slider>
 
   <div class="featured-container">
-    
+
     <!-- Section Header (Matches screenshot) -->
     <div class="featured-header">
       <h2 class="featured-title">Featured Products</h2>
@@ -14,125 +14,115 @@
 
     <!-- Loading State -->
     @if (isLoading()) {
-      <div class="loading-grid">
-        @for (i of [1, 2, 3, 4]; track i) {
-          <div class="skeleton-card">
-            <div class="skeleton-circle"></div>
-            <div class="skeleton-line sm"></div>
-            <div class="skeleton-line lg"></div>
-            <div class="skeleton-line md"></div>
-          </div>
-        }
+    <div class="loading-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+      <div class="skeleton-card">
+        <div class="skeleton-circle"></div>
+        <div class="skeleton-line sm"></div>
+        <div class="skeleton-line lg"></div>
+        <div class="skeleton-line md"></div>
       </div>
+      }
+    </div>
     } @else if (featuredProducts().length === 0) {
-      <!-- Empty State -->
-      <div class="empty-featured-card">
-        <div class="empty-icon-box">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </div>
-        <h3>No featured products yet</h3>
-        <p>Mark products as "Featured" in the catalog editor to showcase them here.</p>
-        <a routerLink="/products/add" class="btn btn-add">Add New Product</a>
+    <!-- Empty State -->
+    <div class="empty-featured-card">
+      <div class="empty-icon-box">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+          </polygon>
+        </svg>
       </div>
+      <h3>No featured products yet</h3>
+      <p>Mark products as "Featured" in the catalog editor to showcase them here.</p>
+      <a routerLink="/products/add" class="btn btn-add">Add New Product</a>
+    </div>
     } @else {
-      <!-- Product Cards Grid (Matches screenshot) -->
-      <div class="products-grid">
-        @for (p of featuredProducts(); track p.product_id) {
-          <div class="product-card" [routerLink]="['/product', p.product_id]">
-            
-            <!-- Card Top: Image Area with Badge -->
-            <div class="card-image-wrap">
-              
-              <!-- Badge (if present) -->
-              @if (p.badge) {
-                <span
-                  class="product-badge"
-                  [class.badge-hot]="p.badge.toUpperCase() === 'HOT' || p.badge.toUpperCase() === 'SALE'"
-                  [class.badge-new]="p.badge.toUpperCase() === 'NEW IN' || p.badge.toUpperCase() === 'NEW ARRIVAL'"
-                >
-                  {{ p.badge }}
-                </span>
-              }
+    <!-- Product Cards Grid (Matches screenshot) -->
+    <div class="products-grid">
+      @for (p of featuredProducts(); track p.product_id) {
+      <div class="product-card" [routerLink]="['/product', p.product_id]">
 
-              <!-- Circular Image Presentation -->
-              <div class="product-image-circle">
-                <img
-                  [src]="getProductImageUrl(p)"
-                  [alt]="p.title"
-                  class="product-img"
-                  (error)="onImageError($event)"
-                />
-              </div>
-            </div>
+        <!-- Card Top: Image Area with Badge -->
+        <div class="card-image-wrap">
 
-            <!-- Card Bottom: Information -->
-            <div class="card-details">
-              
-              <!-- Category Breadcrumb -->
-              <div class="product-category-crumb">
-                <span>{{ p.category_name || 'RANGNODI' | uppercase }}</span>
-                @if (p.subcategory_name) {
-                  <span class="crumb-dot">&bull;</span>
-                  <span>{{ p.subcategory_name | uppercase }}</span>
-                }
-              </div>
+          <!-- Badge (if present) -->
+          @if (p.badge) {
+          <span class="product-badge"
+            [class.badge-hot]="p.badge.toUpperCase() === 'HOT' || p.badge.toUpperCase() === 'SALE'"
+            [class.badge-new]="p.badge.toUpperCase() === 'NEW IN' || p.badge.toUpperCase() === 'NEW ARRIVAL'">
+            {{ p.badge }}
+          </span>
+          }
 
-              <!-- Product Title -->
-              <h3 class="product-title" [title]="p.title">
-                {{ p.title }}
-              </h3>
-
-              <!-- Rating Stars -->
-              <div class="product-rating-row">
-                <div class="stars-gold">
-                  ★★★★★
-                </div>
-                <span class="rating-score">4.9</span>
-                <span class="rating-count">(42)</span>
-              </div>
-
-              <!-- Pricing & Add to Cart Action -->
-              <div class="product-price-action-row">
-                <div class="pricing-box">
-                  @if (p.sale_price) {
-                    <div class="price-sale">
-                      <span class="currency-symbol">৳</span>
-                      <span>{{ p.sale_price | number:'1.0-0' }}</span>
-                    </div>
-                    <div class="price-regular-struck">
-                      <span class="currency-symbol">৳</span>
-                      <span>{{ p.regular_price | number:'1.0-0' }}</span>
-                    </div>
-                  } @else {
-                    <div class="price-sale price-only">
-                      <span class="currency-symbol">৳</span>
-                      <span>{{ p.regular_price | number:'1.0-0' }}</span>
-                    </div>
-                  }
-                </div>
-
-                <button
-                  type="button"
-                  class="btn-add-cart"
-                  (click)="addToCart(p, $event)"
-                  title="Add to Cart"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                  </svg>
-                  <span>Add</span>
-                </button>
-              </div>
-
-            </div>
-
+          <!-- Circular Image Presentation -->
+          <div class="product-image-circle">
+            <img [src]="getProductImageUrl(p)" [alt]="p.title" class="product-img" (error)="onImageError($event)" />
           </div>
-        }
+        </div>
+
+        <!-- Card Bottom: Information -->
+        <div class="card-details">
+
+          <!-- Category Breadcrumb -->
+          <div class="product-category-crumb">
+            <span>{{ p.category_name || 'RANGNODI' | uppercase }}</span>
+            @if (p.subcategory_name) {
+            <span class="crumb-dot">&bull;</span>
+            <span>{{ p.subcategory_name | uppercase }}</span>
+            }
+          </div>
+
+          <!-- Product Title -->
+          <h3 class="product-title" [title]="p.title">
+            {{ p.title }}
+          </h3>
+
+          <!-- Rating Stars -->
+          <div class="product-rating-row">
+            <div class="stars-gold">
+              ★★★★★
+            </div>
+            <span class="rating-score">4.9</span>
+            <span class="rating-count">(42)</span>
+          </div>
+
+          <!-- Pricing & Add to Cart Action -->
+          <div class="product-price-action-row">
+            <div class="pricing-box">
+              @if (p.sale_price) {
+              <div class="price-sale">
+                <span class="currency-symbol">৳</span>
+                <span>{{ p.sale_price | number:'1.0-0' }}</span>
+              </div>
+              <div class="price-regular-struck">
+                <span class="currency-symbol">৳</span>
+                <span>{{ p.regular_price | number:'1.0-0' }}</span>
+              </div>
+              } @else {
+              <div class="price-sale price-only">
+                <span class="currency-symbol">৳</span>
+                <span>{{ p.regular_price | number:'1.0-0' }}</span>
+              </div>
+              }
+            </div>
+
+            <button type="button" class="btn-add-cart" (click)="addToCart(p, $event)" title="Add to Cart">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span>Add</span>
+            </button>
+          </div>
+
+        </div>
+
       </div>
+      }
+    </div>
     }
 
   </div>
