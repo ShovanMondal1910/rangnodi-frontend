@@ -1,118 +1,16 @@
-<div class="container">
-  <header class="header">
-    <div class="logo-area">
-      <div class="logo-icon">⚡</div>
-      <div class="logo-text">
-        <h1>{{ title() }}</h1>
-        <p class="subtitle">Full-Stack Application • Angular + Express TypeScript</p>
-      </div>
-    </div>
-    <div class="badge" [ngClass]="{'connected': isConnected(), 'disconnected': !isConnected() && !isConnecting(), 'connecting': isConnecting()}">
-      <span class="status-dot"></span>
-      <span>
-        @if (isConnecting()) { Connecting to Backend... }
-        @else if (isConnected()) { Backend Connected }
-        @else { Backend Disconnected }
-      </span>
-    </div>
-  </header>
-
-  <main class="main-content">
-    <div class="card status-card">
-      <div class="card-header">
-        <h2>Backend Connection Status</h2>
-        <button class="btn btn-secondary" (click)="checkBackendConnection()" [disabled]="isConnecting()">
-          ↻ Refresh Status
-        </button>
-      </div>
-
-      @if (isConnecting()) {
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>Pinging Express server at <code>http://localhost:5000</code>...</p>
-        </div>
-      } @else if (isConnected()) {
-        <div class="connection-success">
-          <div class="alert alert-success">
-            <strong>✓ Successfully Connected!</strong> The Angular frontend is communicating with Express.js via <code>/health</code> and <code>/api/v1</code>.
-          </div>
-
-          <div class="grid-2">
-            <div class="info-box">
-              <h3>Health Check</h3>
-              <p><strong>Status:</strong> <span class="tag tag-green">{{ health()?.status }}</span></p>
-              <p><strong>Message:</strong> {{ health()?.message }}</p>
-              <p><strong>Server Time:</strong> {{ health()?.timestamp | date:'medium' }}</p>
-              <p><strong>Uptime:</strong> {{ health()?.uptime | number:'1.0-1' }} seconds</p>
-            </div>
-
-            <div class="info-box">
-              <h3>API Response (/api/v1)</h3>
-              <p><strong>Message:</strong> {{ apiMessage() || 'Fetching...' }}</p>
-              <p><strong>Proxy:</strong> Active (<code>proxy.conf.json</code> forwarding <code>/api</code> and <code>/health</code> to <code>:5000</code>)</p>
-              <p><strong>CORS:</strong> Configured on backend for <code>http://localhost:4200</code></p>
-            </div>
-          </div>
-        </div>
-      } @else {
-        <div class="connection-error">
-          <div class="alert alert-error">
-            <strong>✕ Connection Error:</strong> {{ errorMessage() }}
-          </div>
-          <div class="help-box">
-            <h4>How to run the backend:</h4>
-            <ol>
-              <li>Open a terminal in <code>rangnodi-backend</code></li>
-              <li>Run: <code>npm run dev</code></li>
-              <li>Wait for the server to start on port 5000</li>
-              <li>Click <strong>Refresh Status</strong> above</li>
-            </ol>
-          </div>
-        </div>
-      }
-    </div>
-
-    <div class="card architecture-card">
-      <h2>Architecture & Endpoints</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Service</th>
-              <th>Port / URL</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Frontend (Angular)</strong></td>
-              <td><code>http://localhost:4200</code></td>
-              <td>Angular Standalone Application with Signals & HttpClient</td>
-            </tr>
-            <tr>
-              <td><strong>Backend (Express)</strong></td>
-              <td><code>http://localhost:5000</code></td>
-              <td>Express.js TypeScript Server with Helmet, CORS, and Morgan</td>
-            </tr>
-            <tr>
-              <td><strong>API Route</strong></td>
-              <td><code>/api/v1</code></td>
-              <td>Base endpoint for business logic & controllers</td>
-            </tr>
-            <tr>
-              <td><strong>Health Route</strong></td>
-              <td><code>/health</code></td>
-              <td>Live server uptime and health metrics</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<div class="app-shell">
+  <!-- Main View -->
+  <main class="app-content">
+    <router-outlet />
   </main>
 
-  <footer class="footer">
-    <p>Rangnodi Platform • Angular Frontend &amp; Express.js TypeScript Backend</p>
-  </footer>
+  <!-- Global Toasts -->
+  <div class="toast-container">
+    @for (t of toastService.toasts(); track t.id) {
+      <div class="toast-item" [class]="'toast-' + t.type">
+        <span class="toast-msg">{{ t.message }}</span>
+        <button type="button" class="toast-close" (click)="toastService.remove(t.id)">&times;</button>
+      </div>
+    }
+  </div>
 </div>
-
-<router-outlet />
