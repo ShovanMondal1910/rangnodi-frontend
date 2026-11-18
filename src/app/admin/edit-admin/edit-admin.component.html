@@ -1,0 +1,462 @@
+<div class="admin-page-container">
+
+  <!-- Page Top Bar -->
+  <div class="page-top-bar">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/catalog" class="crumb-link">Dashboard</a>
+        <span class="crumb-sep">/</span>
+        <a routerLink="/admin/edit" (click)="clearSelection()" class="crumb-link">Admins</a>
+        @if (selectedAdmin()) {
+          <span class="crumb-sep">/</span>
+          <span class="crumb-curr">{{ selectedAdmin()?.fullname }}</span>
+        }
+      </div>
+      <h1 class="page-heading">
+        @if (selectedAdmin()) {
+          Edit Administrator
+        } @else {
+          Administrator Management
+        }
+      </h1>
+      <p class="page-subheading">
+        @if (selectedAdmin()) {
+          Update administrative permissions, contact details, status, or reset credentials.
+        } @else {
+          Search, filter, and manage all registered system administrators.
+        }
+      </p>
+    </div>
+
+    <div class="header-actions">
+      @if (selectedAdmin()) {
+        <button type="button" class="btn btn-secondary" (click)="clearSelection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>All Admins</span>
+        </button>
+      }
+      <a routerLink="/admin/add" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add Admin</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Strip (When viewing list or looking up admins) -->
+  <div class="search-filter-card">
+    <div class="search-input-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search admins by name, email, phone, or 10-digit ID..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      />
+      @if (searchQuery) {
+        <button type="button" class="btn-clear-search" (click)="searchQuery = ''; onSearchChange()">
+          &times;
+        </button>
+      }
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="filter-pills-row">
+      <button
+        type="button"
+        class="filter-pill"
+        [class.active]="selectedStatusFilter === 'all'"
+        (click)="onStatusFilterChange('all')"
+      >
+        All ({{ admins().length }})
+      </button>
+      <button
+        type="button"
+        class="filter-pill pill-active"
+        [class.active]="selectedStatusFilter === 'active'"
+        (click)="onStatusFilterChange('active')"
+      >
+        Active
+      </button>
+      <button
+        type="button"
+        class="filter-pill pill-inactive"
+        [class.active]="selectedStatusFilter === 'inactive'"
+        (click)="onStatusFilterChange('inactive')"
+      >
+        Inactive
+      </button>
+      <button
+        type="button"
+        class="filter-pill pill-banned"
+        [class.active]="selectedStatusFilter === 'banned'"
+        (click)="onStatusFilterChange('banned')"
+      >
+        Banned
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEW 1: EDIT FORM (When an admin is selected) -->
+  @if (selectedAdmin()) {
+    <form (ngSubmit)="onUpdateSubmit()" class="admin-layout-grid">
+      
+      <!-- Left Column: Edit Form Cards -->
+      <div class="form-cards-column">
+        
+        <!-- Card 1: Identity & Credentials -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-icon-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <h3 class="card-title">Administrator Profile</h3>
+              <p class="card-subtitle">Immutable 10-digit primary ID and contact details</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label">Admin ID (Primary Key)</label>
+                <div class="readonly-badge-wrap font-mono">
+                  <span>{{ selectedAdmin()?.user_id }}</span>
+                  <span class="locked-badge">LOCKED</span>
+                </div>
+                <span class="field-hint">10-digit system identifier. Cannot be mutated once assigned.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="editFullname">Full Name *</label>
+                <input
+                  id="editFullname"
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="fullname"
+                  name="fullname"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="editEmail">Email Address *</label>
+                <input
+                  id="editEmail"
+                  type="email"
+                  class="form-input"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                />
+                <span class="field-hint">Primary email used for sign in and security alerts.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="editPhone">Phone Number</label>
+                <input
+                  id="editPhone"
+                  type="tel"
+                  class="form-input font-mono"
+                  placeholder="017XXXXXXXX"
+                  [(ngModel)]="phone"
+                  name="phone"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="editAvatar">Avatar URL</label>
+              <input
+                id="editAvatar"
+                type="url"
+                class="form-input"
+                placeholder="https://images.example.com/avatars/admin.jpg"
+                [(ngModel)]="avatarUrl"
+                name="avatarUrl"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Security & Password Reset -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-icon-wrap icon-purple">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="card-title">Change Password</h3>
+              <p class="card-subtitle">Leave empty to keep existing password unchanged</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="newPassword">New Password (Optional)</label>
+                <div class="input-action-wrap">
+                  <input
+                    id="newPassword"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    class="form-input"
+                    placeholder="Leave blank to keep current"
+                    [(ngModel)]="newPassword"
+                    name="newPassword"
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-eye"
+                    (click)="togglePasswordVisibility()"
+                    tabindex="-1"
+                  >
+                    {{ showPassword() ? 'Hide' : 'Show' }}
+                  </button>
+                </div>
+                <span class="field-hint">Minimum 6 characters. Overwrites current hash.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="confirmPassword">Confirm New Password</label>
+                <input
+                  id="confirmPassword"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-input"
+                  placeholder="Re-type new password"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Account Status -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-icon-wrap icon-green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="card-title">Account Status & Access</h3>
+              <p class="card-subtitle">Enable, disable, or suspend administrative authorization</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="editStatus">Status</label>
+                <select id="editStatus" class="form-select" [(ngModel)]="status" name="status">
+                  <option value="active">Active (Full Access)</option>
+                  <option value="inactive">Inactive (Suspended)</option>
+                  <option value="banned">Banned (Revoked)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label">Assigned Role</label>
+                <div class="role-badge-box">
+                  <span class="role-chip">ADMINISTRATOR</span>
+                  <span class="role-note">Store & Database Admin</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Sidebar & Actions -->
+      <div class="preview-sidebar-column">
+        
+        <!-- Live Card -->
+        <div class="preview-card-wrap">
+          <div class="preview-card-header">
+            <span class="live-dot-pulse"></span>
+            <span class="live-label">ADMIN CARD</span>
+          </div>
+
+          <div class="admin-profile-badge-card">
+            <div class="profile-avatar-box">
+              @if (avatarUrl) {
+                <img [src]="avatarUrl" alt="Avatar" class="avatar-photo" />
+              } @else {
+                <div class="avatar-placeholder">
+                  {{ fullname ? fullname.charAt(0).toUpperCase() : 'A' }}
+                </div>
+              }
+            </div>
+
+            <h3 class="profile-fullname">{{ fullname || 'Administrator' }}</h3>
+            <p class="profile-email font-mono">{{ email }}</p>
+
+            <div class="profile-tags-row">
+              <span class="status-pill" [class.pill-active]="status === 'active'" [class.pill-inactive]="status === 'inactive'" [class.pill-banned]="status === 'banned'">
+                <span class="status-dot"></span>
+                {{ status | uppercase }}
+              </span>
+              <span class="role-pill">ADMIN</span>
+            </div>
+
+            <div class="profile-metadata-table">
+              <div class="meta-row">
+                <span class="meta-key">ID:</span>
+                <span class="meta-val font-mono">{{ selectedAdmin()?.user_id }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-key">Created:</span>
+                <span class="meta-val font-mono">{{ selectedAdmin()?.created_at | date:'mediumDate' }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-key">Provider:</span>
+                <span class="meta-val">{{ selectedAdmin()?.oauth_provider | uppercase }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Card -->
+        <div class="action-card">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="isSubmitting() || isDeleting()"
+          >
+            @if (isSubmitting()) {
+              <span class="spinner"></span> Updating...
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              <span>Save Changes</span>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary btn-block"
+            (click)="clearSelection()"
+          >
+            Cancel & Return
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-danger btn-block"
+            [disabled]="isSubmitting() || isDeleting()"
+            (click)="onDeleteAdmin()"
+          >
+            @if (isDeleting()) {
+              <span class="spinner"></span> Deleting...
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Delete Administrator</span>
+            }
+          </button>
+        </div>
+
+      </div>
+
+    </form>
+  }
+
+  <!-- VIEW 2: ADMIN DIRECTORY LIST (When no admin is selected) -->
+  @if (!selectedAdmin()) {
+    <div class="admin-directory-grid">
+      @if (isLoadingList()) {
+        <div class="loading-state-card">
+          <span class="spinner spinner-dark"></span>
+          <p>Loading administrators...</p>
+        </div>
+      } @else if (admins().length === 0) {
+        <div class="empty-state-card">
+          <div class="empty-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <line x1="17" y1="8" x2="23" y2="14"></line>
+              <line x1="23" y1="8" x2="17" y2="14"></line>
+            </svg>
+          </div>
+          <h3>No administrators found</h3>
+          <p>No admin accounts match your search or filter criteria.</p>
+          <button type="button" class="btn btn-secondary" (click)="searchQuery = ''; selectedStatusFilter = 'all'; onSearchChange()">
+            Clear Filters
+          </button>
+        </div>
+      } @else {
+        <!-- Grid of Admin Cards -->
+        <div class="admins-card-grid">
+          @for (a of admins(); track a.user_id) {
+            <div class="admin-item-card" [class.item-inactive]="a.status !== 'active'">
+              <div class="item-card-top">
+                <div class="item-avatar">
+                  @if (a.avatar) {
+                    <img [src]="a.avatar" alt="Avatar" class="avatar-photo" />
+                  } @else {
+                    <div class="avatar-placeholder-sm">
+                      {{ a.fullname.charAt(0).toUpperCase() }}
+                    </div>
+                  }
+                </div>
+
+                <div class="item-info">
+                  <div class="item-name-row">
+                    <h4 class="item-fullname">{{ a.fullname }}</h4>
+                    <span class="status-pill-sm" [class.pill-active]="a.status === 'active'" [class.pill-inactive]="a.status === 'inactive'" [class.pill-banned]="a.status === 'banned'">
+                      {{ a.status | uppercase }}
+                    </span>
+                  </div>
+                  <p class="item-email font-mono">{{ a.email }}</p>
+                </div>
+              </div>
+
+              <div class="item-meta-strip">
+                <span class="item-id-tag font-mono">ID: {{ a.user_id }}</span>
+                <span class="item-phone font-mono">{{ a.phone || 'No Phone' }}</span>
+              </div>
+
+              <div class="item-card-footer">
+                <span class="item-date">Created {{ a.created_at | date:'mediumDate' }}</span>
+                <button type="button" class="btn btn-edit-sm" (click)="selectAdmin(a)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                  <span>Edit Admin</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

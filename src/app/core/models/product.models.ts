@@ -60,6 +60,10 @@ export interface ProductResponse {
   stock_quantity: number;
   stock_status: StockStatus;
   status: ProductStatus;
+  badge?: string | null;
+  is_featured?: boolean;
+  rating_avg?: number;
+  rating_count?: number;
   has_main_image?: boolean;
   created_at: string;
 }

@@ -7,13 +7,13 @@
       </div>
 
       <nav class="top-right-links">
-        <a routerLink="/catalog" class="top-link">Catalog Dashboard</a>
-        <span class="top-divider">|</span>
-        <a routerLink="/products/add" class="top-link">Add Product</a>
-        <span class="top-divider">|</span>
-        <a routerLink="/products/edit" class="top-link">Edit Product</a>
-        <span class="top-divider">|</span>
-        <a href="javascript:void(0)" class="top-link">Log In</a>
+        @if (authService.isLoggedIn()) {
+          <a routerLink="/login" class="top-link font-medium">
+            Account ({{ authService.currentUser()?.fullname }})
+          </a>
+        } @else {
+          <a routerLink="/login" class="top-link">Log In</a>
+        }
         <span class="top-divider">|</span>
         <a href="javascript:void(0)" class="top-link">About Us</a>
         <span class="top-divider">|</span>
@@ -32,10 +32,7 @@
       <!-- Brand Logo -->
       <a routerLink="/" class="brand-logo-wrap">
         <div class="brand-emblem">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="#dc2626" stroke-width="1.5" />
-            <path d="M12 6C10 9 7 11 7 14C7 16.76 9.24 19 12 19C14.76 19 17 16.76 17 14C17 11 14 9 12 6Z" fill="#dc2626" />
-          </svg>
+          <img src="/icons/logo.jpeg" alt="Rangnodi Logo" class="brand-logo-img" />
         </div>
         <span class="brand-name">Rangnodi</span>
       </a>
@@ -104,7 +101,7 @@
         </a>
 
         <!-- Account Icon -->
-        <a routerLink="/catalog" class="nav-action-icon" title="Account / Dashboard">
+        <a routerLink="/login" class="nav-action-icon" [title]="authService.isLoggedIn() ? (authService.currentUser()?.fullname || 'Account') : 'Log In / Account'">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>

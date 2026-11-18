@@ -37,11 +37,13 @@ export class ProductService {
       .pipe(map((res) => res.data));
   }
 
-  getProducts(filters?: { category_id?: string; status?: string; search?: string }): Observable<ProductResponse[]> {
+  getProducts(filters?: { category_id?: string; subcategory_id?: string; status?: string; search?: string; is_featured?: boolean }): Observable<ProductResponse[]> {
     let params = new HttpParams();
     if (filters?.category_id) params = params.set('category_id', filters.category_id);
+    if (filters?.subcategory_id) params = params.set('subcategory_id', filters.subcategory_id);
     if (filters?.status) params = params.set('status', filters.status);
     if (filters?.search) params = params.set('search', filters.search);
+    if (filters?.is_featured !== undefined) params = params.set('is_featured', String(filters.is_featured));
 
     return this.http
       .get<ApiResponse<ProductResponse[]>>(this.baseUrl, { params })

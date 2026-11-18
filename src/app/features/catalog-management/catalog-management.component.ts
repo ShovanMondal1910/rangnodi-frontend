@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CatalogService } from '../../core/services/catalog.service';
 import { ToastService } from '../../core/services/toast.service';
 import {
@@ -25,6 +25,7 @@ type FilterStatus = 'all' | 'active' | 'inactive';
 export class CatalogManagementComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly toast = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
 
   // State Signals
   readonly activeTab = signal<ActiveTab>('category');
@@ -100,6 +101,13 @@ export class CatalogManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'subcategory') {
+        this.onTabChange('subcategory');
+      } else if (params['tab'] === 'category') {
+        this.onTabChange('category');
+      }
+    });
     this.refreshAll();
     this.initNewCategoryForm();
   }

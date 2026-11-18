@@ -1,0 +1,149 @@
+<div class="featured-products-page">
+  <div class="featured-container">
+    
+    <!-- Section Header (Matches screenshot) -->
+    <div class="featured-header">
+      <h2 class="featured-title">Featured Products</h2>
+      <p class="featured-subtitle">
+        Top-rated drops, trending lifestyle picks, and limited-edition campaign arrivals
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-grid">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <div class="skeleton-card">
+            <div class="skeleton-circle"></div>
+            <div class="skeleton-line sm"></div>
+            <div class="skeleton-line lg"></div>
+            <div class="skeleton-line md"></div>
+          </div>
+        }
+      </div>
+    } @else if (featuredProducts().length === 0) {
+      <!-- Empty State -->
+      <div class="empty-featured-card">
+        <div class="empty-icon-box">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <h3>No featured products yet</h3>
+        <p>Mark products as "Featured" in the catalog editor to showcase them here.</p>
+        <a routerLink="/products/add" class="btn btn-add">Add New Product</a>
+      </div>
+    } @else {
+      <!-- Product Cards Grid (Matches screenshot) -->
+      <div class="products-grid">
+        @for (p of featuredProducts(); track p.product_id) {
+          <div class="product-card" [routerLink]="['/products/edit', p.product_id]">
+            
+            <!-- Card Top: Image Area with Badge & Wishlist -->
+            <div class="card-image-wrap">
+              
+              <!-- Badge (if present) -->
+              @if (p.badge) {
+                <span
+                  class="product-badge"
+                  [class.badge-hot]="p.badge.toUpperCase() === 'HOT' || p.badge.toUpperCase() === 'SALE'"
+                  [class.badge-new]="p.badge.toUpperCase() === 'NEW IN' || p.badge.toUpperCase() === 'NEW ARRIVAL'"
+                >
+                  {{ p.badge }}
+                </span>
+              }
+
+              <!-- Wishlist Button -->
+              <button
+                type="button"
+                class="btn-wishlist"
+                [class.wishlisted]="isWishlisted(p.product_id)"
+                (click)="toggleWishlist(p, $event)"
+                title="Save to Wishlist"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" [attr.fill]="isWishlisted(p.product_id) ? '#dc2626' : 'none'" [attr.stroke]="isWishlisted(p.product_id) ? '#dc2626' : '#94a3b8'" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+
+              <!-- Circular Image Presentation -->
+              <div class="product-image-circle">
+                <img
+                  [src]="getProductImageUrl(p)"
+                  [alt]="p.title"
+                  class="product-img"
+                  (error)="onImageError($event)"
+                />
+              </div>
+            </div>
+
+            <!-- Card Bottom: Information -->
+            <div class="card-details">
+              
+              <!-- Category Breadcrumb -->
+              <div class="product-category-crumb">
+                <span>{{ p.category_name || 'RANGNODI' | uppercase }}</span>
+                @if (p.subcategory_name) {
+                  <span class="crumb-dot">&bull;</span>
+                  <span>{{ p.subcategory_name | uppercase }}</span>
+                }
+              </div>
+
+              <!-- Product Title -->
+              <h3 class="product-title" [title]="p.title">
+                {{ p.title }}
+              </h3>
+
+              <!-- Rating Stars -->
+              <div class="product-rating-row">
+                <div class="stars-gold">
+                  ★★★★★
+                </div>
+                <span class="rating-score">4.9</span>
+                <span class="rating-count">(42)</span>
+              </div>
+
+              <!-- Pricing & Add to Cart Action -->
+              <div class="product-price-action-row">
+                <div class="pricing-box">
+                  @if (p.sale_price) {
+                    <div class="price-sale">
+                      <span class="currency-symbol">৳</span>
+                      <span>{{ p.sale_price | number:'1.0-0' }}</span>
+                    </div>
+                    <div class="price-regular-struck">
+                      <span class="currency-symbol">৳</span>
+                      <span>{{ p.regular_price | number:'1.0-0' }}</span>
+                    </div>
+                  } @else {
+                    <div class="price-sale price-only">
+                      <span class="currency-symbol">৳</span>
+                      <span>{{ p.regular_price | number:'1.0-0' }}</span>
+                    </div>
+                  }
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-add-cart"
+                  (click)="addToCart(p, $event)"
+                  title="Add to Cart"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                  </svg>
+                  <span>Add</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</div>

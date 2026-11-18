@@ -1,14 +1,20 @@
 <div class="app-shell">
-  <!-- Store Navigation & Mega Menu -->
-  <app-navbar></app-navbar>
+  <!-- Top Bar: Shows Admin Top Navbar for Admin workflows, or Storefront Navbar for Customers -->
+  @if (isAdminRoute()) {
+    <app-admin-navbar></app-admin-navbar>
+  } @else {
+    <app-navbar></app-navbar>
+  }
 
   <!-- Main View -->
-  <main class="app-content">
+  <main class="app-content" [class.admin-layout-main]="isAdminRoute()">
     <router-outlet />
   </main>
 
-  <!-- Store Footer -->
-  <app-footer></app-footer>
+  <!-- Store Footer: Only visible on Customer Storefront pages, hidden on Admin routes -->
+  @if (!isAdminRoute()) {
+    <app-footer></app-footer>
+  }
 
   <!-- Global Toasts -->
   <div class="toast-container">

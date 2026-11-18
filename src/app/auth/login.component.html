@@ -1,0 +1,297 @@
+<div class="auth-page-wrapper">
+  <div class="auth-card">
+    
+    <!-- Header: Logo & Brand -->
+    <div class="auth-header">
+      <div class="brand-emblem-large">
+        <img src="/icons/logo.jpeg" alt="Rangnodi" class="brand-logo-img" />
+      </div>
+      <h1 class="brand-title">Rangnodi</h1>
+      <p class="brand-tagline">
+        @if (activeTab() === 'login') {
+          Sign in to access your orders, wishlist, and exclusive member deals.
+        } @else {
+          Create your Rangnodi account to enjoy rapid checkout & track orders.
+        }
+      </p>
+    </div>
+
+    <!-- If already logged in, show User Card -->
+    @if (authService.isLoggedIn()) {
+      <div class="already-logged-in-box">
+        <div class="user-avatar-circle">
+          @if (authService.currentUser()?.avatar) {
+            <img [src]="authService.currentUser()?.avatar" alt="Avatar" class="avatar-img" />
+          } @else {
+            <span class="avatar-initial">{{ authService.currentUser()?.fullname?.charAt(0)?.toUpperCase() }}</span>
+          }
+        </div>
+        <h3 class="user-name">{{ authService.currentUser()?.fullname }}</h3>
+        <p class="user-email font-mono">{{ authService.currentUser()?.email }}</p>
+        
+        <div class="user-badges-row">
+          <span class="user-badge role-badge">{{ authService.currentUser()?.role | uppercase }}</span>
+          <span class="user-badge id-badge font-mono">ID: {{ authService.currentUser()?.user_id }}</span>
+          <span class="user-badge provider-badge">{{ authService.currentUser()?.oauth_provider | uppercase }}</span>
+        </div>
+
+        <div class="logged-in-actions">
+          @if (authService.isAdmin()) {
+            <a routerLink="/admin/dashboard" class="btn btn-primary">Go to Admin Dashboard</a>
+          } @else {
+            <a routerLink="/" class="btn btn-primary">Start Shopping</a>
+          }
+          <button type="button" class="btn btn-outline" (click)="onSignOut()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    } @else {
+      <!-- Tab Switcher (Log In / Sign Up) -->
+      <div class="auth-tabs-pill">
+        <button
+          type="button"
+          class="tab-pill-btn"
+          [class.active]="activeTab() === 'login'"
+          (click)="setTab('login')"
+        >
+          Sign In
+        </button>
+        <button
+          type="button"
+          class="tab-pill-btn"
+          [class.active]="activeTab() === 'signup'"
+          (click)="setTab('signup')"
+        >
+          Create Account
+        </button>
+      </div>
+
+      <!-- 1. Google One-Click Button -->
+      <div class="google-auth-section">
+        <button
+          type="button"
+          class="btn-google-sign-in"
+          [disabled]="isLoading()"
+          (click)="onGoogleSignIn()"
+        >
+          <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+            <path
+              fill="#4285F4"
+              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.26 21.36 7.33 24 12 24z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.18 0 9.99 0 12s.46 3.82 1.26 5.42l4.02-3.13z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
+            />
+          </svg>
+          <span>
+            @if (activeTab() === 'login') {
+              Continue with Google
+            } @else {
+              Sign up with Google
+            }
+          </span>
+        </button>
+        <span class="google-hint">One click &bull; No password required</span>
+      </div>
+
+      <!-- Divider -->
+      <div class="auth-divider">
+        <span class="divider-line"></span>
+        <span class="divider-text">OR EMAIL</span>
+        <span class="divider-line"></span>
+      </div>
+
+      <!-- 2. LOGIN FORM -->
+      @if (activeTab() === 'login') {
+        <form (ngSubmit)="onLoginSubmit()" class="auth-form">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address</label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+              <input
+                id="loginEmail"
+                type="email"
+                class="form-input"
+                placeholder="name@example.com"
+                [(ngModel)]="loginEmail"
+                name="loginEmail"
+                required
+                autocomplete="email"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label class="form-label" for="loginPassword">Password</label>
+              <a href="javascript:void(0)" class="forgot-link">Forgot password?</a>
+            </div>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input
+                id="loginPassword"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="form-input"
+                placeholder="Enter your password"
+                [(ngModel)]="loginPassword"
+                name="loginPassword"
+                required
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                class="btn-toggle-pwd"
+                (click)="togglePasswordVisibility()"
+                tabindex="-1"
+              >
+                {{ showPassword() ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="remember-row">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
+              <span>Remember me on this device</span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner"></span> Signing in...
+            } @else {
+              Sign In to Rangnodi
+            }
+          </button>
+        </form>
+      }
+
+      <!-- 3. SIGN UP FORM -->
+      @if (activeTab() === 'signup') {
+        <form (ngSubmit)="onSignupSubmit()" class="auth-form">
+          <div class="form-group">
+            <label class="form-label" for="signupFullname">Full Name *</label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input
+                id="signupFullname"
+                type="text"
+                class="form-input"
+                placeholder="e.g. Tanvir Ahmed"
+                [(ngModel)]="signupFullname"
+                name="signupFullname"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">Email Address *</label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+              <input
+                id="signupEmail"
+                type="email"
+                class="form-input"
+                placeholder="name@example.com"
+                [(ngModel)]="signupEmail"
+                name="signupEmail"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupPhone">Phone Number (Optional)</label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <input
+                id="signupPhone"
+                type="tel"
+                class="form-input"
+                placeholder="017XXXXXXXX"
+                [(ngModel)]="signupPhone"
+                name="signupPhone"
+              />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="signupPassword">Password *</label>
+              <input
+                id="signupPassword"
+                type="password"
+                class="form-input"
+                placeholder="Min 6 characters"
+                [(ngModel)]="signupPassword"
+                name="signupPassword"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="signupConfirmPassword">Confirm Password *</label>
+              <input
+                id="signupConfirmPassword"
+                type="password"
+                class="form-input"
+                placeholder="Re-type password"
+                [(ngModel)]="signupConfirmPassword"
+                name="signupConfirmPassword"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="terms-row">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="agreeTerms" name="agreeTerms" required />
+              <span>I agree to Rangnodi's <a href="javascript:void(0)">Terms of Service</a> & <a href="javascript:void(0)">Privacy Policy</a></span>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner"></span> Creating Account...
+            } @else {
+              Create Rangnodi Account
+            }
+          </button>
+        </form>
+      }
+    }
+  </div>
+</div>
