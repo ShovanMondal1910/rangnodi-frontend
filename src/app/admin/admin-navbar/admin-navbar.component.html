@@ -116,16 +116,77 @@
         </div>
       </div>
 
-      <!-- Customers -->
-      <a routerLink="/admin/edit" class="admin-nav-item">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
-        <span>Customers</span>
-      </a>
+      <!-- Customers Dropdown -->
+      <div
+        class="nav-dropdown-wrap"
+        (mouseenter)="openCustomerMenu()"
+        (mouseleave)="closeCustomerMenu()"
+      >
+        <button
+          type="button"
+          class="admin-nav-item dropdown-btn"
+          [class.active-pill]="isCustomerActive()"
+          (click)="toggleCustomerMenu()"
+          (touchstart)="toggleCustomerMenu()"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Customers</span>
+          <svg
+            class="chevron-icon"
+            [class.rotate-chevron]="isCustomerMenuOpen()"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="nav-dropdown-menu" [class.show-menu]="isCustomerMenuOpen()">
+          <a
+            routerLink="/admin/customers/add"
+            class="dropdown-link"
+            (click)="closeCustomerMenu()"
+          >
+            <div class="link-icon-wrap plus-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </div>
+            <div class="link-text-block">
+              <span class="link-title">Add Customer</span>
+              <span class="link-desc">Register client account</span>
+            </div>
+          </a>
+
+          <a
+            routerLink="/admin/customers/edit"
+            class="dropdown-link"
+            (click)="closeCustomerMenu()"
+          >
+            <div class="link-icon-wrap edit-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div class="link-text-block">
+              <span class="link-title">Edit Customer</span>
+              <span class="link-desc">Manage profiles, status & credentials</span>
+            </div>
+          </a>
+        </div>
+      </div>
 
       <!-- Admins Dropdown -->
       <div

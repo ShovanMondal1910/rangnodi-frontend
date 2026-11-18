@@ -22,6 +22,8 @@ export class AddAdminComponent implements OnInit {
   isGeneratingId = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
   showPassword = signal<boolean>(false);
+  avatarFile = signal<File | null>(null);
+  avatarPreview = signal<string>('');
 
   // Form Fields
   fullname = '';
@@ -54,6 +56,36 @@ export class AddAdminComponent implements OnInit {
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.toastService.error('Please choose a valid image file (PNG, JPG, WebP, etc.)');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastService.error('Image size must be less than 5MB');
+        return;
+      }
+
+      this.avatarFile.set(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        this.avatarPreview.set(result);
+        this.avatarUrl = result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeAvatar(): void {
+    this.avatarFile.set(null);
+    this.avatarPreview.set('');
+    this.avatarUrl = '';
   }
 
   onSubmit(): void {

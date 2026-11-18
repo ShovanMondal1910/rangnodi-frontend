@@ -19,6 +19,7 @@ export class AdminNavbarComponent {
   isProductMenuOpen = signal<boolean>(false);
   isCategoriesMenuOpen = signal<boolean>(false);
   isAdminMenuOpen = signal<boolean>(false);
+  isCustomerMenuOpen = signal<boolean>(false);
 
   get adminName(): string {
     return this.authService.currentUser()?.fullname || 'Shovan Mondal';
@@ -50,6 +51,10 @@ export class AdminNavbarComponent {
 
   isAdminsActive(): boolean {
     return this.router.url.startsWith('/admin/add') || this.router.url.startsWith('/admin/edit');
+  }
+
+  isCustomerActive(): boolean {
+    return this.router.url.startsWith('/admin/customers');
   }
 
   toggleProductMenu(): void {
@@ -86,6 +91,18 @@ export class AdminNavbarComponent {
 
   closeAdminMenu(): void {
     this.isAdminMenuOpen.set(false);
+  }
+
+  toggleCustomerMenu(): void {
+    this.isCustomerMenuOpen.update(v => !v);
+  }
+
+  openCustomerMenu(): void {
+    this.isCustomerMenuOpen.set(true);
+  }
+
+  closeCustomerMenu(): void {
+    this.isCustomerMenuOpen.set(false);
   }
 
   onLogout(): void {

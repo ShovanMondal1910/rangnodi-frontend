@@ -1,0 +1,351 @@
+<div class="admin-page-container">
+  
+  <!-- Page Header -->
+  <div class="page-top-bar">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/admin/dashboard" class="crumb-link">Dashboard</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-curr">Customers</span>
+      </div>
+      <h1 class="page-heading">Add New Customer</h1>
+      <p class="page-subheading">
+        Register a new customer account directly to manage store orders, shipping addresses, and support records.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <a routerLink="/admin/customers/edit" class="btn btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>Customer Directory</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Form & Preview Grid -->
+  <form (ngSubmit)="onSubmit()" class="admin-layout-grid">
+    
+    <!-- Left Column: Form Cards -->
+    <div class="form-cards-column">
+      
+      <!-- Card 1: Identity -->
+      <div class="admin-card">
+        <div class="card-header">
+          <div class="card-icon-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div>
+            <h3 class="card-title">Customer Profile Information</h3>
+            <p class="card-subtitle">Personal contact information and unique 10-digit ID</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- ID Generator Row -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="field-label" for="customerId">Customer ID (10-Digit Primary Key)</label>
+              <div class="input-action-wrap">
+                <input
+                  id="customerId"
+                  type="text"
+                  class="form-input font-mono readonly-input"
+                  [value]="generatedId()"
+                  readonly
+                />
+                <button
+                  type="button"
+                  class="btn-regen"
+                  [disabled]="isGeneratingId()"
+                  (click)="fetchGeneratedId()"
+                  title="Generate a different 10-digit ID"
+                >
+                  <svg [class.spin]="isGeneratingId()" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                  </svg>
+                  <span>{{ isGeneratingId() ? 'Generating...' : 'Regenerate' }}</span>
+                </button>
+              </div>
+              <span class="field-hint">Auto-generated guaranteed unique 10-digit identifier.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="fullname">Full Name <span class="required-star">*</span></label>
+              <input
+                id="fullname"
+                type="text"
+                class="form-input"
+                placeholder="e.g. Tanvir Ahmed"
+                [(ngModel)]="fullname"
+                name="fullname"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Email & Phone -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="field-label" for="email">Email Address <span class="required-star">*</span></label>
+              <input
+                id="email"
+                type="email"
+                class="form-input"
+                placeholder="e.g. customer@example.com"
+                [(ngModel)]="email"
+                name="email"
+                required
+              />
+              <span class="field-hint">Used for order confirmations and login.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="phone">Phone Number (Optional)</label>
+              <input
+                id="phone"
+                type="tel"
+                class="form-input font-mono"
+                placeholder="e.g. +8801700000000"
+                [(ngModel)]="phone"
+                name="phone"
+              />
+              <span class="field-hint">Required for Cash on Delivery order verification.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Security & Status -->
+      <div class="admin-card">
+        <div class="card-header">
+          <div class="card-icon-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="card-title">Security & Account Status</h3>
+            <p class="card-subtitle">Initial password and account access status</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="field-label" for="password">Password (Optional, Default: Customer&#64;1234)</label>
+              <div class="input-password-wrap">
+                <input
+                  id="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-input"
+                  placeholder="Leave empty for Customer@1234"
+                  [(ngModel)]="password"
+                  name="password"
+                />
+                <button
+                  type="button"
+                  class="btn-toggle-eye"
+                  (click)="togglePasswordVisibility()"
+                  title="Toggle password view"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    @if (showPassword()) {
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    } @else {
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    }
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label" for="confirmPassword">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="form-input"
+                placeholder="Confirm password"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword"
+              />
+            </div>
+          </div>
+
+          <!-- Status Selector -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="field-label">Account Status</label>
+              <div class="status-radio-group">
+                <label class="radio-card" [class.selected]="status === 'active'">
+                  <input type="radio" name="status" value="active" [(ngModel)]="status" />
+                  <div class="radio-content">
+                    <span class="status-dot green"></span>
+                    <div>
+                      <strong class="radio-title">Active</strong>
+                      <span class="radio-desc">Customer can log in and place orders</span>
+                    </div>
+                  </div>
+                </label>
+
+                <label class="radio-card" [class.selected]="status === 'inactive'">
+                  <input type="radio" name="status" value="inactive" [(ngModel)]="status" />
+                  <div class="radio-content">
+                    <span class="status-dot orange"></span>
+                    <div>
+                      <strong class="radio-title">Inactive</strong>
+                      <span class="radio-desc">Account temporarily paused</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="field-label">Customer Profile Photo (Binary BYTEA Storage)</label>
+              
+              <div class="avatar-uploader-box">
+                @if (avatarPreview()) {
+                  <div class="avatar-preview-container">
+                    <img [src]="avatarPreview()" alt="Avatar Preview" class="uploaded-avatar-thumb" />
+                    <div class="avatar-uploader-meta">
+                      <span class="meta-filename">{{ avatarFile()?.name || 'Selected Profile Photo' }}</span>
+                      <span class="meta-filesize">Binary photo ready to save to database</span>
+                      <div class="avatar-action-btns">
+                        <label class="btn btn-xs btn-outline file-trigger-label">
+                          Change Photo
+                          <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                        </label>
+                        <button type="button" class="btn btn-xs btn-danger-soft" (click)="removeAvatar()">
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <label class="avatar-dropzone">
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                    <div class="dropzone-content">
+                      <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                      <span class="dropzone-primary-text">Click to choose or drop profile photo</span>
+                      <span class="dropzone-sub-text">PNG, JPG, WebP up to 5MB (stored directly as binary BYTEA)</span>
+                    </div>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Actions Bar -->
+      <div class="form-actions-card">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          routerLink="/admin/customers/edit"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isSubmitting()"
+        >
+          <svg *ngIf="isSubmitting()" class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>{{ isSubmitting() ? 'Saving Customer...' : 'Create Customer Account' }}</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Live Card Preview & Info -->
+    <div class="preview-sidebar-column">
+      
+      <!-- Live Customer Card Preview -->
+      <div class="admin-card preview-card">
+        <div class="card-header border-none">
+          <span class="preview-badge">LIVE PREVIEW</span>
+        </div>
+
+        <div class="customer-preview-body">
+          <div class="customer-avatar-large">
+            @if (avatarPreview()) {
+              <img [src]="avatarPreview()" alt="Avatar" class="avatar-img" />
+            } @else {
+              <div class="avatar-initials font-mono">
+                {{ initials }}
+              </div>
+            }
+            <span class="status-indicator-badge" [class.online]="status === 'active'"></span>
+          </div>
+
+          <h3 class="customer-preview-name">{{ fullname.trim() || 'Customer Name' }}</h3>
+          <p class="customer-preview-email font-mono">{{ email.trim() || 'customer@example.com' }}</p>
+
+          <div class="preview-role-pill">
+            <span class="role-badge">CUSTOMER</span>
+            <span class="status-pill-badge" [class.active]="status === 'active'">
+              {{ status | uppercase }}
+            </span>
+          </div>
+
+          <div class="preview-meta-list font-mono">
+            <div class="meta-row">
+              <span class="meta-label">ID:</span>
+              <span class="meta-val">{{ generatedId() }}</span>
+            </div>
+            <div class="meta-row" *ngIf="phone">
+              <span class="meta-label">Phone:</span>
+              <span class="meta-val">{{ phone }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Guidance Card -->
+      <div class="admin-card tips-card">
+        <h4 class="tips-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          Customer Permissions
+        </h4>
+        <ul class="tips-list">
+          <li><strong>Storefront Access:</strong> Customers browse catalogs, manage wishlists, and place orders.</li>
+          <li><strong>Admin Shield:</strong> Customers do not have access to admin dashboards, catalog editors, or revenue statistics.</li>
+          <li><strong>ID Format:</strong> Every customer is allocated a clean, 10-digit identifier for customer support and order lookups.</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </form>
+
+</div>

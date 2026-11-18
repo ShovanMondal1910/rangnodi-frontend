@@ -31,6 +31,9 @@ export class EditAdminComponent implements OnInit {
   isSubmitting = signal<boolean>(false);
   isDeleting = signal<boolean>(false);
   showPassword = signal<boolean>(false);
+  avatarFile = signal<File | null>(null);
+  avatarPreview = signal<string>('');
+  isAvatarRemoved = signal<boolean>(false);
 
   // Edit Form Fields
   fullname = '';
@@ -83,6 +86,9 @@ export class EditAdminComponent implements OnInit {
     this.phone = admin.phone || '';
     this.status = admin.status;
     this.avatarUrl = admin.avatar || '';
+    this.avatarPreview.set(admin.avatar || '');
+    this.avatarFile.set(null);
+    this.isAvatarRemoved.set(false);
     this.newPassword = '';
     this.confirmPassword = '';
     
@@ -109,11 +115,45 @@ export class EditAdminComponent implements OnInit {
     this.selectedAdmin.set(null);
     this.newPassword = '';
     this.confirmPassword = '';
+    this.avatarPreview.set('');
+    this.avatarFile.set(null);
+    this.isAvatarRemoved.set(false);
     this.router.navigate(['/admin/edit']);
   }
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.toastService.error('Please choose a valid image file (PNG, JPG, WebP, etc.)');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastService.error('Image size must be less than 5MB');
+        return;
+      }
+
+      this.avatarFile.set(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        this.avatarPreview.set(result);
+        this.isAvatarRemoved.set(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeAvatar(): void {
+    this.avatarFile.set(null);
+    this.avatarPreview.set('');
+    this.avatarUrl = '';
+    this.isAvatarRemoved.set(true);
   }
 
   onUpdateSubmit(): void {
@@ -141,14 +181,27 @@ export class EditAdminComponent implements OnInit {
     }
 
     this.isSubmitting.set(true);
-    this.adminService.updateAdmin(admin.user_id, {
+
+    let avatarPayload: string | null | undefined = undefined;
+    if (this.isAvatarRemoved()) {
+      avatarPayload = null;
+    } else if (this.avatarFile()) {
+      avatarPayload = this.avatarPreview();
+    }
+
+    const payload: any = {
       fullname: this.fullname.trim(),
       email: this.email.trim().toLowerCase(),
       phone: this.phone ? this.phone.trim() : null,
       status: this.status,
-      avatar: this.avatarUrl ? this.avatarUrl.trim() : null,
       password: this.newPassword ? this.newPassword : undefined
-    }).subscribe({
+    };
+
+    if (avatarPayload !== undefined) {
+      payload.avatar = avatarPayload;
+    }
+
+    this.adminService.updateAdmin(admin.user_id, payload).subscribe({
       next: (res) => {
         this.isSubmitting.set(false);
         this.selectedAdmin.set(res.data);

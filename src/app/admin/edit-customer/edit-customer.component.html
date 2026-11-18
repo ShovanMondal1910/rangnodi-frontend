@@ -1,0 +1,554 @@
+<div class="admin-page-container">
+
+  <!-- Page Top Bar -->
+  <div class="page-top-bar">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/admin/dashboard" class="crumb-link">Dashboard</a>
+        <span class="crumb-sep">/</span>
+        <a routerLink="/admin/customers/edit" (click)="clearSelection()" class="crumb-link">Customers</a>
+        @if (selectedCustomer()) {
+          <span class="crumb-sep">/</span>
+          <span class="crumb-curr">{{ selectedCustomer()?.fullname }}</span>
+        }
+      </div>
+      <h1 class="page-heading">
+        @if (selectedCustomer()) {
+          Edit Customer Account
+        } @else {
+          Customer Directory & Management
+        }
+      </h1>
+      <p class="page-subheading">
+        @if (selectedCustomer()) {
+          Update profile details, contact information, account status, or reset credentials.
+        } @else {
+          Search, filter, inspect, and manage all registered customer accounts.
+        }
+      </p>
+    </div>
+
+    <div class="header-actions">
+      @if (selectedCustomer()) {
+        <button type="button" class="btn btn-secondary" (click)="clearSelection()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>All Customers</span>
+        </button>
+      }
+      <a routerLink="/admin/customers/add" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Add Customer</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Strip (Visible when in directory view) -->
+  @if (!selectedCustomer()) {
+    <div class="search-filter-card">
+      <div class="search-input-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search by customer name, email, phone, or 10-digit ID..."
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()"
+        />
+      </div>
+
+      <div class="filter-pills-row">
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="selectedStatusFilter === 'all'"
+          (click)="onStatusFilterChange('all')"
+        >
+          All ({{ customers().length }})
+        </button>
+
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="selectedStatusFilter === 'active'"
+          (click)="onStatusFilterChange('active')"
+        >
+          Active
+        </button>
+
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="selectedStatusFilter === 'inactive'"
+          (click)="onStatusFilterChange('inactive')"
+        >
+          Inactive
+        </button>
+
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="selectedStatusFilter === 'banned'"
+          (click)="onStatusFilterChange('banned')"
+        >
+          Banned
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ======================================================================
+       VIEW A: CUSTOMER DIRECTORY LIST / TABLE
+       ====================================================================== -->
+  @if (!selectedCustomer()) {
+    <div class="directory-container">
+      
+      <!-- Loading State -->
+      @if (isLoadingList()) {
+        <div class="loading-box">
+          <div class="spinner lg"></div>
+          <p>Loading customers from database...</p>
+        </div>
+      } @else if (customers().length === 0) {
+        <!-- Empty State -->
+        <div class="empty-box">
+          <div class="empty-icon-circle">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>No customers found</h3>
+          <p *ngIf="searchQuery || selectedStatusFilter !== 'all'">No customer records match your filter criteria.</p>
+          <p *ngIf="!searchQuery && selectedStatusFilter === 'all'">No customer accounts registered yet.</p>
+          <a routerLink="/admin/customers/add" class="btn btn-primary">Add First Customer</a>
+        </div>
+      } @else {
+        <!-- Customers Table -->
+        <div class="table-card">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>10-Digit ID</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (cust of customers(); track cust.user_id) {
+                <tr class="table-row-hover" (click)="selectCustomer(cust)">
+                  <td>
+                    <div class="customer-cell">
+                      <div class="cell-avatar font-mono">
+                        @if (cust.avatar) {
+                          <img [src]="cust.avatar" alt="Avatar" class="cell-avatar-img" />
+                        } @else {
+                          {{ cust.fullname ? cust.fullname.substring(0, 2).toUpperCase() : 'CU' }}
+                        }
+                      </div>
+                      <div class="cell-info">
+                        <strong class="cell-name">{{ cust.fullname }}</strong>
+                        <span class="cell-sub font-mono">{{ cust.email }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="id-badge font-mono">{{ cust.user_id }}</span>
+                  </td>
+
+                  <td>
+                    <div class="contact-stack">
+                      <span>{{ cust.phone || 'No phone recorded' }}</span>
+                      <span class="provider-tag font-mono">Provider: {{ cust.oauth_provider }}</span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span
+                      class="status-chip"
+                      [class.chip-active]="cust.status === 'active'"
+                      [class.chip-inactive]="cust.status === 'inactive'"
+                      [class.chip-banned]="cust.status === 'banned'"
+                    >
+                      <span class="dot"></span>
+                      {{ cust.status | uppercase }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <span class="date-text font-mono">{{ cust.created_at | date:'mediumDate' }}</span>
+                  </td>
+
+                  <td class="text-right" (click)="$event.stopPropagation()">
+                    <div class="action-btn-group">
+                      <button
+                        type="button"
+                        class="btn-table-action btn-edit"
+                        (click)="selectCustomer(cust)"
+                        title="Edit Customer"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span>Edit</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- ======================================================================
+       VIEW B: CUSTOMER EDIT FORM & LIVE PREVIEW
+       ====================================================================== -->
+  @if (selectedCustomer()) {
+    <form (ngSubmit)="onSubmit()" class="admin-layout-grid">
+      
+      <!-- Left Column: Form Cards -->
+      <div class="form-cards-column">
+        
+        <!-- Card 1: Customer Profile -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-icon-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <h3 class="card-title">Personal & Contact Details</h3>
+              <p class="card-subtitle">Manage customer profile and primary contact info</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- ID & Name -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="editCustId">Customer ID</label>
+                <input
+                  id="editCustId"
+                  type="text"
+                  class="form-input font-mono readonly-input"
+                  [value]="selectedCustomer()?.user_id"
+                  readonly
+                />
+                <span class="field-hint">Permanent unique 10-digit primary key.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="editFullname">Full Name <span class="required-star">*</span></label>
+                <input
+                  id="editFullname"
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="fullname"
+                  name="fullname"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Email & Phone -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="editEmail">Email Address <span class="required-star">*</span></label>
+                <input
+                  id="editEmail"
+                  type="email"
+                  class="form-input"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="editPhone">Phone Number</label>
+                <input
+                  id="editPhone"
+                  type="tel"
+                  class="form-input font-mono"
+                  placeholder="e.g. +8801700000000"
+                  [(ngModel)]="phone"
+                  name="phone"
+                />
+              </div>
+            </div>
+
+            <!-- Avatar Photo Uploader (Binary BYTEA) -->
+            <div class="form-group" style="margin-top: 16px;">
+              <label class="field-label">Customer Profile Photo (Stored as Binary BYTEA)</label>
+              
+              <div class="avatar-uploader-box">
+                @if (avatarPreview()) {
+                  <div class="avatar-preview-container">
+                    <img [src]="avatarPreview()" alt="Avatar Preview" class="uploaded-avatar-thumb" />
+                    <div class="avatar-uploader-meta">
+                      <span class="meta-filename">{{ avatarFile()?.name || 'Active Profile Photo' }}</span>
+                      <span class="meta-filesize">Stored in PostgreSQL as binary BYTEA</span>
+                      <div class="avatar-action-btns">
+                        <label class="btn btn-xs btn-outline file-trigger-label">
+                          Change Photo
+                          <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                        </label>
+                        <button type="button" class="btn btn-xs btn-danger-soft" (click)="removeAvatar()">
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <label class="avatar-dropzone">
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                    <div class="dropzone-content">
+                      <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                      <span class="dropzone-primary-text">Click to choose or replace profile photo</span>
+                      <span class="dropzone-sub-text">PNG, JPG, WebP up to 5MB (stored securely as binary BYTEA)</span>
+                    </div>
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Status & Password Reset -->
+        <div class="admin-card">
+          <div class="card-header">
+            <div class="card-icon-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="card-title">Security & Account Access</h3>
+              <p class="card-subtitle">Set account access state or reset password</p>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- Status Options -->
+            <div class="form-group">
+              <label class="field-label">Account Status</label>
+              <div class="status-radio-group-3">
+                <label class="radio-card" [class.selected]="status === 'active'">
+                  <input type="radio" name="status" value="active" [(ngModel)]="status" />
+                  <div class="radio-content">
+                    <span class="status-dot green"></span>
+                    <div>
+                      <strong class="radio-title">Active</strong>
+                      <span class="radio-desc">Customer can log in & checkout</span>
+                    </div>
+                  </div>
+                </label>
+
+                <label class="radio-card" [class.selected]="status === 'inactive'">
+                  <input type="radio" name="status" value="inactive" [(ngModel)]="status" />
+                  <div class="radio-content">
+                    <span class="status-dot orange"></span>
+                    <div>
+                      <strong class="radio-title">Inactive</strong>
+                      <span class="radio-desc">Temporarily disabled</span>
+                    </div>
+                  </div>
+                </label>
+
+                <label class="radio-card" [class.selected]="status === 'banned'">
+                  <input type="radio" name="status" value="banned" [(ngModel)]="status" />
+                  <div class="radio-content">
+                    <span class="status-dot red"></span>
+                    <div>
+                      <strong class="radio-title">Banned</strong>
+                      <span class="radio-desc">Revoke store access</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Optional Password Reset -->
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="field-label" for="newPassword">Reset Password (Optional)</label>
+                <div class="input-password-wrap">
+                  <input
+                    id="newPassword"
+                    [type]="showPassword() ? 'text' : 'password'"
+                    class="form-input"
+                    placeholder="Leave blank to keep unchanged"
+                    [(ngModel)]="newPassword"
+                    name="newPassword"
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-eye"
+                    (click)="togglePasswordVisibility()"
+                    title="Toggle password view"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      @if (showPassword()) {
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      } @else {
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      }
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="confirmPassword">Confirm New Password</label>
+                <input
+                  id="confirmPassword"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  class="form-input"
+                  placeholder="Repeat new password"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions Bar -->
+        <div class="form-actions-card">
+          <button
+            type="button"
+            class="btn btn-danger-outline"
+            [disabled]="isDeleting()"
+            (click)="deleteCustomer()"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>{{ isDeleting() ? 'Deleting...' : 'Delete Customer' }}</span>
+          </button>
+
+          <div class="right-action-pair">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="clearSelection()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isSubmitting()"
+            >
+              <svg *ngIf="isSubmitting()" class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              <span>{{ isSubmitting() ? 'Saving...' : 'Update Customer' }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Customer Card Preview -->
+      <div class="preview-sidebar-column">
+        
+        <div class="admin-card preview-card">
+          <div class="card-header border-none">
+            <span class="preview-badge">CUSTOMER PROFILE</span>
+          </div>
+
+          <div class="customer-preview-body">
+            <div class="customer-avatar-large">
+              @if (avatarPreview()) {
+                <img [src]="avatarPreview()" alt="Avatar" class="avatar-img" />
+              } @else {
+                <div class="avatar-initials font-mono">
+                  {{ initials }}
+                </div>
+              }
+              <span class="status-indicator-badge" [class.online]="status === 'active'"></span>
+            </div>
+
+            <h3 class="customer-preview-name">{{ fullname.trim() || 'Customer Name' }}</h3>
+            <p class="customer-preview-email font-mono">{{ email.trim() || 'email@example.com' }}</p>
+
+            <div class="preview-role-pill">
+              <span class="role-badge">CUSTOMER</span>
+              <span class="status-pill-badge" [class.active]="status === 'active'" [class.banned]="status === 'banned'">
+                {{ status | uppercase }}
+              </span>
+            </div>
+
+            <div class="preview-meta-list font-mono">
+              <div class="meta-row">
+                <span class="meta-label">Customer ID:</span>
+                <span class="meta-val">{{ selectedCustomer()?.user_id }}</span>
+              </div>
+              <div class="meta-row" *ngIf="phone">
+                <span class="meta-label">Phone:</span>
+                <span class="meta-val">{{ phone }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Account Created:</span>
+                <span class="meta-val">{{ selectedCustomer()?.created_at | date:'mediumDate' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Tip -->
+        <div class="admin-card tips-card">
+          <h4 class="tips-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Customer Account Status
+          </h4>
+          <p class="tips-p">
+            Marking an account as <strong>Inactive</strong> or <strong>Banned</strong> immediately prevents the customer from signing in and placing new store orders.
+          </p>
+        </div>
+
+      </div>
+
+    </form>
+  }
+
+</div>

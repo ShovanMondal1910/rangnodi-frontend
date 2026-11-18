@@ -180,15 +180,42 @@
             </div>
 
             <div class="form-group">
-              <label class="field-label" for="editAvatar">Avatar URL</label>
-              <input
-                id="editAvatar"
-                type="url"
-                class="form-input"
-                placeholder="https://images.example.com/avatars/admin.jpg"
-                [(ngModel)]="avatarUrl"
-                name="avatarUrl"
-              />
+              <label class="field-label">Administrator Profile Photo (Stored as Binary BYTEA)</label>
+              <div class="avatar-uploader-box">
+                @if (avatarPreview()) {
+                  <div class="avatar-preview-container">
+                    <img [src]="avatarPreview()" alt="Avatar Preview" class="uploaded-avatar-thumb" />
+                    <div class="avatar-uploader-meta">
+                      <span class="meta-filename">{{ avatarFile()?.name || 'Active Profile Photo' }}</span>
+                      <span class="meta-filesize">Stored in PostgreSQL as binary BYTEA</span>
+                      <div class="avatar-action-btns">
+                        <label class="btn btn-xs btn-outline file-trigger-label">
+                          Change Photo
+                          <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                        </label>
+                        <button type="button" class="btn btn-xs btn-danger-soft" (click)="removeAvatar()">
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                } @else {
+                  <label class="avatar-dropzone">
+                    <input type="file" accept="image/*" (change)="onFileSelected($event)" class="visually-hidden" />
+                    <div class="dropzone-content">
+                      <div class="dropzone-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                      </div>
+                      <span class="dropzone-primary-text">Click to choose or replace profile photo</span>
+                      <span class="dropzone-sub-text">PNG, JPG, WebP up to 5MB (stored securely as binary BYTEA)</span>
+                    </div>
+                  </label>
+                }
+              </div>
             </div>
           </div>
         </div>
@@ -299,8 +326,8 @@
 
           <div class="admin-profile-badge-card">
             <div class="profile-avatar-box">
-              @if (avatarUrl) {
-                <img [src]="avatarUrl" alt="Avatar" class="avatar-photo" />
+              @if (avatarPreview() || avatarUrl) {
+                <img [src]="avatarPreview() || avatarUrl" alt="Avatar" class="avatar-photo" />
               } @else {
                 <div class="avatar-placeholder">
                   {{ fullname ? fullname.charAt(0).toUpperCase() : 'A' }}

@@ -5,6 +5,8 @@ import { EditProductComponent } from './features/products/edit-product/edit-prod
 import { LoginComponent } from './auth/login.component';
 import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
+import { AddCustomerComponent } from './admin/add-customer/add-customer.component';
+import { EditCustomerComponent } from './admin/edit-customer/edit-customer.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { FeaturedProductsComponent } from './features/featured-products/featured-products.component';
 import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
@@ -45,6 +47,23 @@ export const routes: Routes = [
   {
     path: 'admin/edit',
     component: EditAdminComponent,
+  },
+  {
+    path: 'admin/customers/add',
+    component: AddCustomerComponent,
+  },
+  {
+    path: 'admin/customers/edit/:id',
+    component: EditCustomerComponent,
+  },
+  {
+    path: 'admin/customers/edit',
+    component: EditCustomerComponent,
+  },
+  {
+    path: 'admin/customers',
+    redirectTo: 'admin/customers/edit',
+    pathMatch: 'full',
   },
   {
     path: 'login',
