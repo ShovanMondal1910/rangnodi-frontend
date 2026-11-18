@@ -1,0 +1,304 @@
+<div class="checkout-page-shell">
+  <div class="checkout-container">
+
+    <!-- Order Placed Success View -->
+    @if (orderSuccess()) {
+      <div class="order-success-card">
+        <div class="success-icon-circle">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2>Thank You For Your Order!</h2>
+        <p class="order-id-highlight">Order ID: <strong>{{ orderSuccess()?.orderId }}</strong></p>
+        <p class="order-subtext">We've received your order and our logistics team is preparing it for dispatch.</p>
+        <div class="success-actions">
+          <a routerLink="/" class="btn-navy-order">CONTINUE SHOPPING</a>
+          <a routerLink="/profile" [queryParams]="{ tab: 'orders' }" class="btn-outline-order">VIEW MY ORDERS</a>
+        </div>
+      </div>
+    } @else {
+
+      <form (ngSubmit)="placeOrder()" class="checkout-form-grid" novalidate>
+
+        <div class="checkout-main-grid">
+
+          <!-- ===================================================================
+               LEFT COLUMN: Delivery Address, Review Cart & Payment Options
+               =================================================================== -->
+          <div class="checkout-left-column">
+
+            <!-- CARD 1: DELIVERY & BILLING ADDRESS -->
+            <div class="checkout-card">
+              <div class="floating-pill-wrap">
+                <span class="floating-pill">DELIVERY & BILLING ADDRESS</span>
+              </div>
+
+              <div class="card-inner-content">
+                <h4 class="card-subtitle">Enter Your Delivery Address Details</h4>
+
+                <!-- First name & Last name -->
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label class="field-label" for="bFirstName">
+                      First name <span class="required-star">*</span>
+                    </label>
+                    <input
+                      id="bFirstName"
+                      type="text"
+                      class="checkout-input"
+                      [class.has-error]="submitted() && !billingFirstName.trim()"
+                      [(ngModel)]="billingFirstName"
+                      name="billingFirstName"
+                      placeholder="First name"
+                      required
+                    />
+                    @if (submitted() && !billingFirstName.trim()) {
+                      <span class="error-msg-red">First Name is required</span>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="field-label" for="bLastName">Last name</label>
+                    <input
+                      id="bLastName"
+                      type="text"
+                      class="checkout-input"
+                      [(ngModel)]="billingLastName"
+                      name="billingLastName"
+                      placeholder="Last name"
+                    />
+                  </div>
+                </div>
+
+                <!-- Phone number & Email address -->
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label class="field-label" for="bPhone">
+                      Phone number <span class="required-star">*</span>
+                    </label>
+                    <div class="compound-phone-input" [class.has-error]="submitted() && !billingPhone.trim()">
+                      <span class="country-prefix font-mono">+880 (BD)</span>
+                      <input
+                        id="bPhone"
+                        type="tel"
+                        class="phone-field font-mono"
+                        [(ngModel)]="billingPhone"
+                        name="billingPhone"
+                        placeholder="01976192554"
+                        required
+                      />
+                    </div>
+                    <span class="field-hint-text">Enter phone number without leading '0' or country code prefix.</span>
+                    @if (submitted() && !billingPhone.trim()) {
+                      <span class="error-msg-red">Phone number is required</span>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="field-label" for="bEmail">
+                      Email address <span class="required-star">*</span>
+                    </label>
+                    <input
+                      id="bEmail"
+                      type="email"
+                      class="checkout-input font-mono"
+                      [class.has-error]="submitted() && !billingEmail.trim()"
+                      [(ngModel)]="billingEmail"
+                      name="billingEmail"
+                      placeholder="shovanmondal746826@gmail.com"
+                      required
+                    />
+                    @if (submitted() && !billingEmail.trim()) {
+                      <span class="error-msg-red">Email address is required</span>
+                    }
+                  </div>
+                </div>
+
+
+
+                <!-- Address Textarea -->
+                <div class="form-group">
+                  <label class="field-label" for="bAddress">
+                    Address <span class="required-star">*</span>
+                  </label>
+                  <textarea
+                    id="bAddress"
+                    class="checkout-textarea"
+                    [class.has-error]="submitted() && !billingAddress.trim()"
+                    [(ngModel)]="billingAddress"
+                    name="billingAddress"
+                    rows="3"
+                    placeholder="Address Details"
+                    required
+                  ></textarea>
+                  @if (submitted() && !billingAddress.trim()) {
+                    <span class="error-msg-red">Address is required</span>
+                  }
+                </div>
+
+              </div>
+            </div>
+
+            <!-- CARD 2: REVIEW CART -->
+            <div class="checkout-card">
+              <div class="floating-pill-wrap">
+                <span class="floating-pill">REVIEW CART</span>
+              </div>
+
+              <div class="card-inner-content p-0">
+                <div class="table-responsive">
+                  <table class="review-cart-table">
+                    <thead>
+                      <tr>
+                        <th class="col-img">Image</th>
+                        <th class="col-info">Product Info</th>
+                        <th class="col-price text-center">Base Price</th>
+                        <th class="col-vat text-center">VAT</th>
+                        <th class="col-disc text-center">Discount (Per Product)</th>
+                        <th class="col-total text-right">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of cartService.items(); track item.id) {
+                        <tr>
+                          <td class="col-img">
+                            <div class="review-thumb-frame">
+                              <img [src]="getItemImageUrl(item)" [alt]="item.title" class="review-thumb-img" (error)="onImageError($event)" />
+                            </div>
+                          </td>
+                          <td class="col-info">
+                            <strong class="review-prod-title">{{ item.title | uppercase }} | {{ item.selected_color || 'Navy' }}-{{ item.selected_size || 'M' }}</strong>
+                            <span class="review-prod-variants">Color :{{ item.selected_color || 'navy' }} | Size:{{ item.selected_size || 'm' }}</span>
+                            <span class="review-prod-qty">Qty : {{ item.quantity }}</span>
+                          </td>
+                          <td class="col-price text-center font-mono">
+                            {{ item.regular_price | number:'1.0-0' }}
+                          </td>
+                          <td class="col-vat text-center font-mono">
+                            {{ (item.unit_price * 0.075) | number:'1.2-2' }}
+                          </td>
+                          <td class="col-disc text-center font-mono text-red">
+                            {{ ((item.regular_price - item.unit_price) > 0 ? (item.regular_price - item.unit_price) : 0) | number:'1.0-0' }}
+                          </td>
+                          <td class="col-total text-right font-mono font-bold">
+                            {{ (item.unit_price * item.quantity) | number:'1.2-2' }}
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 3: PAYMENT OPTIONS -->
+            <div class="checkout-card">
+              <div class="floating-pill-wrap">
+                <span class="floating-pill">PAYMENT OPTIONS</span>
+              </div>
+
+              <div class="card-inner-content">
+                <h4 class="payment-title">Select Payment Method</h4>
+
+                <div class="payment-methods-row">
+                  <label class="payment-method-box">
+                    <input type="radio" name="payMethod" value="cod" [(ngModel)]="paymentMethod" checked />
+                    <span class="radio-custom-dot"></span>
+                    <div class="cod-label-wrap">
+                      <svg class="delivery-truck-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                      </svg>
+                      <strong>Cash on Delivery (COD)</strong>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="terms-accept-row">
+                  <label class="terms-checkbox-label">
+                    <input type="checkbox" [(ngModel)]="acceptTerms" name="acceptTerms" required />
+                    <span>
+                      Accept the <a href="javascript:void(0)" class="terms-link">Terms & Conditions</a>, 
+                      <a href="javascript:void(0)" class="terms-link">Return & Refund Policy</a> and 
+                      <a href="javascript:void(0)" class="terms-link">Privacy Policy</a> of rangnodi.com
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          <!-- ===================================================================
+               RIGHT COLUMN: SUMMARY CARD (Sticky Sidebar)
+               =================================================================== -->
+          <aside class="checkout-right-column">
+            
+            <!-- CARD 4: SUMMARY -->
+            <div class="checkout-card summary-sticky-card">
+              <div class="floating-pill-wrap">
+                <span class="floating-pill">SUMMARY</span>
+              </div>
+
+              <div class="card-inner-content">
+                <div class="summary-breakdown-list">
+                  <div class="sum-row">
+                    <span class="sum-label">Sub Total</span>
+                    <span class="sum-val font-mono">{{ subtotal() | number:'1.2-2' }} BDT</span>
+                  </div>
+
+                  <div class="sum-row">
+                    <span class="sum-label">Shipping Charge</span>
+                    <span class="sum-val font-mono">{{ shippingCharge() | number:'1.2-2' }} BDT</span>
+                  </div>
+
+                  <div class="sum-row">
+                    <span class="sum-label">Total Discount</span>
+                    <span class="sum-val font-mono">{{ discountAmount() | number:'1.2-2' }} BDT</span>
+                  </div>
+
+                  <div class="sum-row">
+                    <span class="sum-label">VAT (7.5%)</span>
+                    <span class="sum-val font-mono">{{ vatAmount() | number:'1.2-2' }} BDT</span>
+                  </div>
+
+                  <div class="sum-row">
+                    <span class="sum-label">Rounding Off</span>
+                    <span class="sum-val font-mono text-red">{{ roundingOff() | number:'1.2-2' }} BDT</span>
+                  </div>
+
+                  <div class="sum-row sum-grand-total">
+                    <span class="sum-label font-bold">Total</span>
+                    <span class="sum-val font-mono font-bold">{{ totalAmount() | number:'1.2-2' }} BDT</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn-order-now"
+                  [disabled]="isSubmitting() || cartService.items().length === 0"
+                >
+                  @if (isSubmitting()) {
+                    <span class="btn-spinner"></span>
+                    <span>PROCESSING...</span>
+                  } @else {
+                    <span>ORDER NOW</span>
+                  }
+                </button>
+              </div>
+            </div>
+
+          </aside>
+
+        </div>
+
+      </form>
+
+    }
+
+  </div>
+</div>

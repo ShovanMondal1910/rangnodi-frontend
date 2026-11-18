@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { ToastService } from '../../core/services/toast.service';
+import { CartService } from '../../core/services/cart.service';
 import { ProductResponse } from '../../core/models/product.models';
 import { HeroSliderComponent } from '../hero-slider/hero-slider.component';
 
@@ -16,10 +17,10 @@ import { HeroSliderComponent } from '../hero-slider/hero-slider.component';
 export class FeaturedProductsComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly toastService = inject(ToastService);
+  private readonly cartService = inject(CartService);
 
   featuredProducts = signal<ProductResponse[]>([]);
   isLoading = signal<boolean>(true);
-  wishlistedIds = signal<Set<string>>(new Set());
 
   ngOnInit(): void {
     this.loadFeaturedProducts();
@@ -40,30 +41,10 @@ export class FeaturedProductsComponent implements OnInit {
     });
   }
 
-  toggleWishlist(product: ProductResponse, event: Event): void {
-    event.stopPropagation();
-    event.preventDefault();
-
-    const currentSet = new Set(this.wishlistedIds());
-    if (currentSet.has(product.product_id)) {
-      currentSet.delete(product.product_id);
-      this.wishlistedIds.set(currentSet);
-      this.toastService.info(`Removed "${product.title}" from your Wishlist`);
-    } else {
-      currentSet.add(product.product_id);
-      this.wishlistedIds.set(currentSet);
-      this.toastService.success(`Added "${product.title}" to your Wishlist!`);
-    }
-  }
-
-  isWishlisted(productId: string): boolean {
-    return this.wishlistedIds().has(productId);
-  }
-
   addToCart(product: ProductResponse, event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-    this.toastService.success(`Added "${product.title}" to your shopping cart!`);
+    this.cartService.addToCart(product, 1);
   }
 
   getProductImageUrl(product: ProductResponse): string {

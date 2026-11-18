@@ -1,0 +1,537 @@
+<div class="admin-page-container">
+
+  <!-- =========================================================================
+       1. PAGE TOP BAR (Breadcrumbs, Title & Global Actions)
+       ========================================================================= -->
+  <div class="page-top-bar">
+    <div class="header-titles">
+      <div class="breadcrumb-trail">
+        <a routerLink="/admin/dashboard" class="crumb-link">Dashboard</a>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-curr">Orders</span>
+      </div>
+      <h1 class="page-heading">Order Management & Fulfillment</h1>
+      <p class="page-subheading">
+        Inspect, process, track, and update order statuses across all customer purchases.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" (click)="loadOrders()" [disabled]="isLoading()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spin-icon]="isLoading()">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+        </svg>
+        <span>Refresh</span>
+      </button>
+
+      <button type="button" class="btn btn-primary" (click)="printInvoice()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print Report</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. KPI METRIC CARDS ROW
+       ========================================================================= -->
+  <div class="stats-cards-grid">
+    
+    <!-- Total Orders -->
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">TOTAL ORDERS</span>
+        <div class="stat-icon-box bg-blue-soft">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-number font-mono">{{ totalOrdersCount() }}</div>
+      <div class="stat-subtext">Lifetime store checkouts</div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">TOTAL REVENUE</span>
+        <div class="stat-icon-box bg-green-soft">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-number font-mono">৳{{ totalRevenue() | number:'1.0-0' }}</div>
+      <div class="stat-subtext">Gross sales in BDT</div>
+    </div>
+
+    <!-- Processing Orders -->
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">PROCESSING</span>
+        <div class="stat-icon-box bg-amber-soft">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-number font-mono text-amber">{{ processingCount() }}</div>
+      <div class="stat-subtext">Awaiting fulfillment / pack</div>
+    </div>
+
+    <!-- Delivered Orders -->
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">DELIVERED</span>
+        <div class="stat-icon-box bg-emerald-soft">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-number font-mono text-emerald">{{ deliveredCount() }}</div>
+      <div class="stat-subtext">Successfully completed</div>
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       3. SEARCH & STATUS FILTER STRIP
+       ========================================================================= -->
+  <div class="search-filter-card">
+    <div class="search-input-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by Order ID, customer name, phone, email, or address..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+      />
+    </div>
+
+    <div class="filter-pills-row">
+      @for (tab of statusTabs; track tab.key) {
+        <button
+          type="button"
+          class="filter-pill"
+          [class.active]="selectedStatusFilter === tab.key"
+          (click)="onStatusFilterChange(tab.key)"
+        >
+          {{ tab.label }}
+          @if (tab.key === 'all') {
+            ({{ orders().length }})
+          } @else if (tab.key === 'processing') {
+            ({{ processingCount() }})
+          } @else if (tab.key === 'pending') {
+            ({{ pendingCount() }})
+          } @else if (tab.key === 'shipped') {
+            ({{ shippedCount() }})
+          } @else if (tab.key === 'delivered') {
+            ({{ deliveredCount() }})
+          } @else if (tab.key === 'cancelled') {
+            ({{ cancelledCount() }})
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       4. ORDERS DATA TABLE
+       ========================================================================= -->
+  <div class="table-container-card">
+
+    @if (isLoading()) {
+      <div class="loading-state-box">
+        <div class="table-spinner"></div>
+        <p>Loading customer orders from database...</p>
+      </div>
+    } @else if (filteredOrders().length === 0) {
+      <div class="empty-state-box">
+        <div class="empty-icon-circle">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+        </div>
+        <h3 class="empty-title">No orders found</h3>
+        <p class="empty-subtitle">
+          @if (searchQuery.trim() || selectedStatusFilter !== 'all') {
+            No orders match your current search criteria or filter.
+          } @else {
+            When customers place orders via the storefront checkout, they will appear here in real-time.
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="table-scroll-wrap">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th class="col-order-id">ORDER ID</th>
+              <th class="col-customer">CUSTOMER</th>
+              <th class="col-address">DELIVERY ADDRESS</th>
+              <th class="col-items">ITEMS</th>
+              <th class="col-total text-right">TOTAL</th>
+              <th class="col-payment text-center">PAYMENT</th>
+              <th class="col-status text-center">STATUS</th>
+              <th class="col-date">DATE</th>
+              <th class="col-actions text-right">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of filteredOrders(); track order.order_id) {
+              <tr class="order-table-row" (click)="openOrderDetails(order)">
+                
+                <!-- 1. Order ID -->
+                <td class="col-order-id">
+                  <div class="order-badge-cell">
+                    <span class="order-pill-code font-mono">{{ order.order_id }}</span>
+                    @if (order.user_id) {
+                      <span class="user-id-sub font-mono">Cust ID: {{ order.user_id }}</span>
+                    } @else {
+                      <span class="guest-sub">Guest Checkout</span>
+                    }
+                  </div>
+                </td>
+
+                <!-- 2. Customer -->
+                <td class="col-customer">
+                  <div class="customer-info-cell">
+                    <strong class="customer-name-text">{{ order.customer_name }}</strong>
+                    <span class="customer-phone font-mono">{{ order.phone }}</span>
+                    <span class="customer-email">{{ order.email }}</span>
+                  </div>
+                </td>
+
+                <!-- 3. Delivery Address -->
+                <td class="col-address">
+                  <div class="address-snippet-cell" [title]="order.delivery_address">
+                    <p class="address-truncate">{{ order.delivery_address }}</p>
+                  </div>
+                </td>
+
+                <!-- 4. Items -->
+                <td class="col-items">
+                  <div class="items-preview-cell">
+                    <span class="items-count-badge">{{ order.items?.length || 0 }} Item(s)</span>
+                    <div class="items-thumb-strip">
+                      @for (item of (order.items || []).slice(0, 3); track item.id) {
+                        <div class="mini-thumb-frame" [title]="item.product_title">
+                          <img [src]="item.image_url" [alt]="item.product_title" (error)="onImageError($event)" />
+                        </div>
+                      }
+                      @if ((order.items?.length || 0) > 3) {
+                        <span class="more-items-badge">+{{ order.items.length - 3 }}</span>
+                      }
+                    </div>
+                  </div>
+                </td>
+
+                <!-- 5. Total -->
+                <td class="col-total text-right">
+                  <strong class="total-money font-mono">৳{{ order.total_amount | number:'1.2-2' }}</strong>
+                  <span class="currency-sub">BDT</span>
+                </td>
+
+                <!-- 6. Payment -->
+                <td class="col-payment text-center">
+                  <div class="payment-pill-wrap">
+                    <span class="badge-payment-method">{{ order.payment_method | uppercase }}</span>
+                    <span class="badge-payment-status pay-{{ order.payment_status | lowercase }}">
+                      {{ order.payment_status | uppercase }}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- 7. Status (Interactive Dropdown) -->
+                <td class="col-status text-center" (click)="$event.stopPropagation()">
+                  <select
+                    class="status-select-control status-{{ (order.order_status || 'processing') | lowercase }}"
+                    [value]="order.order_status"
+                    (change)="onQuickStatusChange(order, $any($event.target).value)"
+                  >
+                    @for (s of orderStatuses; track s) {
+                      <option [value]="s">{{ s | uppercase }}</option>
+                    }
+                  </select>
+                </td>
+
+                <!-- 8. Date -->
+                <td class="col-date">
+                  <div class="date-cell">
+                    <span class="date-main">{{ order.created_at | date:'mediumDate' }}</span>
+                    <span class="date-sub font-mono">{{ order.created_at | date:'shortTime' }}</span>
+                  </div>
+                </td>
+
+                <!-- 9. Actions -->
+                <td class="col-actions text-right" (click)="$event.stopPropagation()">
+                  <div class="action-buttons-group">
+                    <button
+                      type="button"
+                      class="btn-icon-action invoice-btn"
+                      title="View / Print Invoice"
+                      (click)="openInvoice(order.order_id, $event)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon-action view-btn"
+                      title="Inspect Order Details"
+                      (click)="openOrderDetails(order)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-icon-action delete-btn"
+                      title="Delete Order"
+                      (click)="deleteOrder(order, $event)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  </div>
+
+  <!-- =========================================================================
+       5. ORDER DETAILS & FULFILLMENT MODAL (Inspection View)
+       ========================================================================= -->
+  @if (selectedOrder()) {
+    <div class="modal-backdrop" (click)="closeOrderDetails()">
+      <div class="order-detail-modal" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="modal-header-titles">
+            <span class="modal-pill-tag">ORDER DETAILS</span>
+            <h2 class="modal-order-id font-mono">#{{ selectedOrder()?.order_id }}</h2>
+            <span class="modal-date-text">Placed on {{ selectedOrder()?.created_at | date:'fullDate' }} at {{ selectedOrder()?.created_at | date:'shortTime' }}</span>
+          </div>
+
+          <div class="modal-header-actions">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="openInvoice(selectedOrder()!.order_id)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>View / Print Invoice</span>
+            </button>
+            <button type="button" class="btn-close-modal" (click)="closeOrderDetails()">&times;</button>
+          </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body-scroll">
+          
+          <!-- Quick Status Changer Card -->
+          <div class="modal-section-box status-changer-box">
+            <h4 class="section-box-title">Order Status & Payment Control</h4>
+            
+            <div class="status-fields-grid">
+              <div class="form-group">
+                <label class="field-label">Fulfillment Status</label>
+                <select class="form-select" [(ngModel)]="editOrderStatus">
+                  @for (s of orderStatuses; track s) {
+                    <option [value]="s">{{ s | uppercase }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label">Payment Status</label>
+                <select class="form-select" [(ngModel)]="editPaymentStatus">
+                  @for (p of paymentStatuses; track p) {
+                    <option [value]="p">{{ p | uppercase }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="status-action-cell">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-save-status"
+                  (click)="saveStatusFromModal()"
+                  [disabled]="isUpdating()"
+                >
+                  @if (isUpdating()) {
+                    <span class="btn-spinner"></span>
+                    <span>SAVING...</span>
+                  } @else {
+                    <span>UPDATE STATUS</span>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer & Delivery Destination Card -->
+          <div class="modal-section-box">
+            <h4 class="section-box-title">Delivery & Customer Information</h4>
+            
+            <div class="customer-details-grid">
+              <div class="detail-block">
+                <span class="detail-label">Recipient Name</span>
+                <strong class="detail-val">{{ selectedOrder()?.customer_name }}</strong>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Contact Phone</span>
+                <span class="detail-val font-mono">{{ selectedOrder()?.phone }}</span>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Email Address</span>
+                <span class="detail-val">{{ selectedOrder()?.email }}</span>
+              </div>
+
+              <div class="detail-block">
+                <span class="detail-label">Registered User ID</span>
+                <span class="detail-val font-mono">{{ selectedOrder()?.user_id || 'Guest Customer' }}</span>
+              </div>
+
+              <div class="detail-block col-span-2">
+                <span class="detail-label">Full Delivery Address</span>
+                <p class="delivery-address-full">{{ selectedOrder()?.delivery_address }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Purchased Line Items Table -->
+          <div class="modal-section-box">
+            <h4 class="section-box-title">Purchased Items ({{ selectedOrder()?.items?.length || 0 }})</h4>
+
+            <div class="modal-table-wrap">
+              <table class="modal-items-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Details</th>
+                    <th class="text-center">SKU</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Line Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of selectedOrder()?.items || []; track item.id) {
+                    <tr>
+                      <td class="col-item-thumb">
+                        <div class="item-thumb-box">
+                          <img [src]="item.image_url" [alt]="item.product_title" (error)="onImageError($event)" />
+                        </div>
+                      </td>
+                      <td class="col-item-desc">
+                        <strong class="item-title-text">{{ item.product_title }}</strong>
+                        <div class="item-variants-inline">
+                          @if (item.selected_color) {
+                            <span>Color: <strong>{{ item.selected_color }}</strong></span>
+                          }
+                          @if (item.selected_size) {
+                            <span>Size: <strong>{{ item.selected_size }}</strong></span>
+                          }
+                        </div>
+                      </td>
+                      <td class="text-center font-mono">{{ item.sku || '-' }}</td>
+                      <td class="text-right font-mono">৳{{ item.unit_price | number:'1.2-2' }}</td>
+                      <td class="text-center font-mono font-bold">{{ item.quantity }}</td>
+                      <td class="text-right font-mono font-bold">৳{{ item.total_price | number:'1.2-2' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Financial Summary Box -->
+            <div class="financial-summary-wrap">
+              <div class="summary-line">
+                <span>Subtotal:</span>
+                <strong class="font-mono">৳{{ selectedOrder()?.subtotal | number:'1.2-2' }} BDT</strong>
+              </div>
+              <div class="summary-line">
+                <span>Shipping Charge:</span>
+                <strong class="font-mono">৳{{ selectedOrder()?.shipping_charge | number:'1.2-2' }} BDT</strong>
+              </div>
+              @if ((selectedOrder()?.discount_amount || 0) > 0) {
+                <div class="summary-line text-green">
+                  <span>Discount:</span>
+                  <strong class="font-mono">-৳{{ selectedOrder()?.discount_amount | number:'1.2-2' }} BDT</strong>
+                </div>
+              }
+              <div class="summary-line">
+                <span>VAT (7.5%):</span>
+                <strong class="font-mono">৳{{ selectedOrder()?.vat_amount | number:'1.2-2' }} BDT</strong>
+              </div>
+              @if (selectedOrder()?.rounding_off) {
+                <div class="summary-line">
+                  <span>Rounding Off:</span>
+                  <strong class="font-mono">{{ selectedOrder()?.rounding_off | number:'1.2-2' }} BDT</strong>
+                </div>
+              }
+              <div class="summary-line grand-total-line">
+                <span>Grand Total:</span>
+                <strong class="font-mono text-xl">৳{{ selectedOrder()?.total_amount | number:'1.2-2' }} BDT</strong>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeOrderDetails()">Close</button>
+          <button type="button" class="btn btn-danger" (click)="deleteOrder(selectedOrder()!)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Delete Order</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

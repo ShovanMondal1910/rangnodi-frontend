@@ -1,0 +1,253 @@
+<div class="invoice-page-shell">
+
+  <!-- =========================================================================
+       SCREEN TOOLBAR (Hidden in Print)
+       ========================================================================= -->
+  <div class="invoice-toolbar no-print">
+    <div class="toolbar-left">
+      <button type="button" class="btn-tb btn-tb-back" (click)="goBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to Orders</span>
+      </button>
+      <span class="toolbar-order-id font-mono">Invoice #{{ order()?.order_id }}</span>
+    </div>
+
+    <div class="toolbar-right">
+      <button type="button" class="btn-tb btn-tb-print" (click)="print()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Print Invoice / Download PDF</span>
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="invoice-loading-wrap no-print">
+      <div class="invoice-spinner"></div>
+      <p>Loading invoice details...</p>
+    </div>
+  } @else if (!order()) {
+    <div class="invoice-error-wrap no-print">
+      <h3>Invoice Not Found</h3>
+      <p>{{ errorMessage() || 'Unable to locate order records for this invoice.' }}</p>
+      <button type="button" class="btn-tb btn-tb-back" (click)="goBack()">Return to Orders</button>
+    </div>
+  } @else {
+
+    <!-- =========================================================================
+         PRINTABLE INVOICE SHEET (Standard A4 Dimensions)
+         ========================================================================= -->
+    <div class="invoice-sheet" id="invoiceSheet">
+
+      <!-- Header: Brand & Document Title -->
+      <header class="inv-header">
+        <div class="inv-brand-block">
+          <div class="inv-logo-wrap">
+            <img src="/icons/logo.jpeg" alt="Rangnodi Logo" class="inv-logo-img" />
+          </div>
+          <div class="inv-brand-text">
+            <h1 class="inv-brand-name">RANGNODI</h1>
+            <span class="inv-brand-tagline">Traditional Elegance & Contemporary Fashion</span>
+            <p class="inv-store-address">
+              House #14, Road #07, Dhanmondi, Dhaka-1205, Bangladesh<br>
+              Hotline: +880 1976-192554 | Email: support@rangnodi.com | Web: www.rangnodi.com
+            </p>
+          </div>
+        </div>
+
+        <div class="inv-title-block">
+          <h2 class="inv-doc-title">INVOICE</h2>
+          <span class="inv-doc-subtitle">CASH MEMO / BILL</span>
+          
+          <div class="inv-meta-list">
+            <div class="inv-meta-row">
+              <span class="meta-label">Invoice No:</span>
+              <strong class="meta-val font-mono">{{ order()?.order_id }}</strong>
+            </div>
+            <div class="inv-meta-row">
+              <span class="meta-label">Date:</span>
+              <span class="meta-val">{{ order()?.created_at | date:'mediumDate' }}</span>
+            </div>
+            <div class="inv-meta-row">
+              <span class="meta-label">Time:</span>
+              <span class="meta-val font-mono">{{ order()?.created_at | date:'shortTime' }}</span>
+            </div>
+            <div class="inv-meta-row">
+              <span class="meta-label">Payment:</span>
+              <span class="meta-val font-bold">{{ order()?.payment_method | uppercase }}</span>
+            </div>
+            <div class="inv-meta-row">
+              <span class="meta-label">Status:</span>
+              <span class="meta-badge-status status-{{ order()?.order_status | lowercase }}">
+                {{ order()?.order_status | uppercase }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="inv-divider"></div>
+
+      <!-- Customer & Shipping Info Grid -->
+      <section class="inv-customer-section">
+        <div class="inv-info-box billed-to-box">
+          <h4 class="box-title">BILLED & DELIVERED TO:</h4>
+          <h3 class="customer-name-heading">{{ order()?.customer_name }}</h3>
+          <p class="customer-delivery-address">{{ order()?.delivery_address }}</p>
+          <div class="customer-contacts">
+            <span><strong>Phone:</strong> <span class="font-mono">{{ order()?.phone }}</span></span>
+            <span><strong>Email:</strong> {{ order()?.email }}</span>
+          </div>
+        </div>
+
+        <div class="inv-info-box order-meta-box">
+          <h4 class="box-title">ORDER PARTICULARS:</h4>
+          <div class="meta-field-item">
+            <span class="mf-label">Customer ID:</span>
+            <span class="mf-val font-mono">{{ order()?.user_id || 'GUEST' }}</span>
+          </div>
+          <div class="meta-field-item">
+            <span class="mf-label">Payment Status:</span>
+            <span class="mf-val font-bold pay-{{ order()?.payment_status | lowercase }}">
+              {{ order()?.payment_status | uppercase }}
+            </span>
+          </div>
+          <div class="meta-field-item">
+            <span class="mf-label">Fulfillment:</span>
+            <span class="mf-val">Standard Courier Delivery</span>
+          </div>
+          <div class="meta-field-item">
+            <span class="mf-label">Currency:</span>
+            <span class="mf-val">Bangladeshi Taka (BDT)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Line Items Table -->
+      <section class="inv-table-section">
+        <table class="inv-items-table">
+          <thead>
+            <tr>
+              <th class="col-sn">#</th>
+              <th class="col-desc">ITEM DESCRIPTION</th>
+              <th class="col-sku text-center">SKU</th>
+              <th class="col-variant text-center">VARIANT</th>
+              <th class="col-unit text-right">UNIT PRICE</th>
+              <th class="col-qty text-center">QTY</th>
+              <th class="col-total text-right">TOTAL (BDT)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order()?.items || []; track item.id; let i = $index) {
+              <tr>
+                <td class="col-sn font-mono text-center">{{ i + 1 }}</td>
+                <td class="col-desc">
+                  <strong class="item-name">{{ item.product_title }}</strong>
+                </td>
+                <td class="col-sku text-center font-mono">{{ item.sku || '-' }}</td>
+                <td class="col-variant text-center">
+                  @if (item.selected_color || item.selected_size) {
+                    <span>{{ item.selected_color || '' }} {{ item.selected_size ? '(' + item.selected_size + ')' : '' }}</span>
+                  } @else {
+                    <span>Standard</span>
+                  }
+                </td>
+                <td class="col-unit text-right font-mono">৳{{ item.unit_price | number:'1.2-2' }}</td>
+                <td class="col-qty text-center font-mono font-bold">{{ item.quantity }}</td>
+                <td class="col-total text-right font-mono font-bold">৳{{ item.total_price | number:'1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Bottom Split: Terms & Financials -->
+      <section class="inv-bottom-section">
+        
+        <!-- Left: Terms & Notice -->
+        <div class="inv-terms-block">
+          <h4 class="terms-title">TERMS & CONDITIONS:</h4>
+          <ol class="terms-list">
+            <li>Please inspect the package and contents thoroughly upon receiving delivery.</li>
+            <li>Exchange of unworn items with intact original tags is accepted within 7 days.</li>
+            <li>For Cash on Delivery, the exact billed amount must be handed over to the courier officer.</li>
+            <li>For order support or inquiries, please contact our helpdesk at <strong>+880 1976-192554</strong>.</li>
+          </ol>
+
+          <!-- Customer signature dashed box -->
+          <div class="customer-sig-area">
+            <div class="sig-line"></div>
+            <span class="sig-caption">Customer's Signature</span>
+          </div>
+        </div>
+
+        <!-- Right: Financial Summary -->
+        <div class="inv-financials-block">
+          <div class="fin-row">
+            <span class="fin-label">Sub-Total:</span>
+            <span class="fin-val font-mono">৳{{ order()?.subtotal | number:'1.2-2' }}</span>
+          </div>
+
+          <div class="fin-row">
+            <span class="fin-label">Delivery Charge:</span>
+            <span class="fin-val font-mono">৳{{ order()?.shipping_charge | number:'1.2-2' }}</span>
+          </div>
+
+          @if ((order()?.discount_amount || 0) > 0) {
+            <div class="fin-row text-discount">
+              <span class="fin-label">Discount:</span>
+              <span class="fin-val font-mono">-৳{{ order()?.discount_amount | number:'1.2-2' }}</span>
+            </div>
+          }
+
+          <div class="fin-row">
+            <span class="fin-label">VAT (7.5%):</span>
+            <span class="fin-val font-mono">৳{{ order()?.vat_amount | number:'1.2-2' }}</span>
+          </div>
+
+          @if (order()?.rounding_off) {
+            <div class="fin-row">
+              <span class="fin-label">Rounding Off:</span>
+              <span class="fin-val font-mono">{{ order()?.rounding_off | number:'1.2-2' }}</span>
+            </div>
+          }
+
+          <div class="fin-row fin-grand-total">
+            <span class="fin-label font-bold">TOTAL PAYABLE:</span>
+            <span class="fin-val font-mono font-bold text-lg">৳{{ order()?.total_amount | number:'1.2-2' }} BDT</span>
+          </div>
+
+          <!-- Authorized Signature Stamp -->
+          <div class="authorized-stamp-box">
+            <div class="official-seal">
+              <div class="seal-inner">
+                <span class="seal-brand">RANGNODI</span>
+                <span class="seal-status">VERIFIED ORDER</span>
+                <span class="seal-dhaka">DHAKA, BD</span>
+              </div>
+            </div>
+            <div class="sig-line-auth">
+              <span class="sig-caption">Authorized Signatory</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Footer Greeting -->
+      <footer class="inv-footer">
+        <p class="footer-thank-you">THANK YOU FOR SHOPPING WITH RANGNODI!</p>
+        <p class="footer-computer-gen">This is a system-generated electronic invoice valid without a physical signature. Issued by Rangnodi E-Commerce.</p>
+      </footer>
+
+    </div>
+
+  }
+
+</div>

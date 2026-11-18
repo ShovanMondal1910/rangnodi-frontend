@@ -1,0 +1,290 @@
+<div class="cart-page-shell">
+  
+  <div class="cart-container">
+    
+    <!-- Empty Cart State -->
+    @if (cartService.items().length === 0) {
+      <div class="empty-cart-card">
+        <div class="empty-cart-icon">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+        </div>
+        <h3>Your Shopping Cart is Empty</h3>
+        <p>Looks like you haven't added anything to your cart yet.</p>
+        <a routerLink="/" class="btn-continue-nav">CONTINUE SHOPPING</a>
+      </div>
+    } @else {
+      
+      <!-- 2-Column Layout matching Screenshot -->
+      <div class="cart-grid-layout">
+        
+        <!-- ===================================================================
+             LEFT COLUMN: Products Table
+             =================================================================== -->
+        <div class="cart-table-card">
+          <div class="table-responsive">
+            <table class="cart-data-table">
+              <thead>
+                <tr>
+                  <th class="col-image">Image</th>
+                  <th class="col-name">Product Name</th>
+                  <th class="col-model">Model</th>
+                  <th class="col-price text-center">Base Price</th>
+                  <th class="col-discount text-center">Discount (Per Product)</th>
+                  <th class="col-qty text-center">Quantity</th>
+                  <th class="col-total text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of cartService.items(); track item.id) {
+                  <tr>
+                    
+                    <!-- 1. Image Thumbnail -->
+                    <td class="col-image">
+                      <div class="product-thumb-frame">
+                        <img 
+                          [src]="getItemImageUrl(item)" 
+                          [alt]="item.title" 
+                          class="product-thumb-img" 
+                          (error)="onImageError($event)"
+                        />
+                      </div>
+                    </td>
+
+                    <!-- 2. Product Name & Variants -->
+                    <td class="col-name">
+                      <h4 class="product-cart-title">{{ item.title | uppercase }}</h4>
+                      <div class="product-variants-stack">
+                        <span class="variant-line">Size: {{ item.selected_size || 'M' }}</span>
+                        <span class="variant-line">Color: {{ item.selected_color || 'Standard' }}</span>
+                      </div>
+                    </td>
+
+                    <!-- 3. Model / SKU -->
+                    <td class="col-model">
+                      <span class="model-code font-mono">{{ item.sku || item.product_id }}</span>
+                    </td>
+
+                    <!-- 4. Base Price -->
+                    <td class="col-price text-center">
+                      <span class="price-val">{{ item.regular_price | number:'1.0-0' }}</span>
+                    </td>
+
+                    <!-- 5. Discount (Per Product) -->
+                    <td class="col-discount text-center">
+                      <span class="discount-val">
+                        {{ ((item.regular_price - item.unit_price) > 0 ? (item.regular_price - item.unit_price) : 0) | number:'1.0-0' }}
+                      </span>
+                    </td>
+
+                    <!-- 6. Quantity Stepper + Red [X] Delete Box -->
+                    <td class="col-qty text-center">
+                      <div class="qty-action-group">
+                        <input 
+                          type="number" 
+                          min="1" 
+                          [value]="item.quantity" 
+                          (change)="onQuantityChange(item, $event)"
+                          class="qty-number-input"
+                        />
+                        <button 
+                          type="button" 
+                          class="btn-delete-square" 
+                          (click)="removeItem(item.id)" 
+                          title="Remove item"
+                        >
+                          &#10005;
+                        </button>
+                      </div>
+                    </td>
+
+                    <!-- 7. Total -->
+                    <td class="col-total text-right">
+                      <span class="row-total-val font-mono">
+                        {{ (item.unit_price * item.quantity) | number:'1.1-2' }}
+                      </span>
+                    </td>
+
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+        <!-- ===================================================================
+             RIGHT COLUMN: Summary & Coupon Box ("WHAT WOULD YOU LIKE TO DO NEXT?")
+             =================================================================== -->
+        <aside class="cart-summary-sidebar">
+          
+          <div class="summary-card">
+            
+            <!-- Title with Red Accent Underline -->
+            <div class="summary-header">
+              <h3 class="summary-title">WHAT WOULD YOU LIKE TO DO NEXT?</h3>
+              <div class="red-accent-line"></div>
+            </div>
+
+            <!-- Accordion Section 1: USE COUPON CODE -->
+            <div class="accordion-item">
+              <button 
+                type="button" 
+                class="accordion-trigger" 
+                (click)="isCouponOpen.set(!isCouponOpen())"
+              >
+                <span class="accordion-icon-circle">{{ isCouponOpen() ? '⊖' : '⊕' }}</span>
+                <span class="accordion-label">USE COUPON CODE</span>
+              </button>
+
+              @if (isCouponOpen()) {
+                <div class="accordion-content">
+                  
+                  <!-- View Available Coupons Dropdown Pill -->
+                  <div class="available-coupons-wrap">
+                    <button 
+                      type="button" 
+                      class="btn-available-coupons" 
+                      (click)="showAvailableCoupons.set(!showAvailableCoupons())"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                      </svg>
+                      <span>View Available Coupons ({{ availableCoupons.length }})</span>
+                      <span class="chevron-arrow">&#9662;</span>
+                    </button>
+
+                    @if (showAvailableCoupons()) {
+                      <div class="coupon-dropdown-menu">
+                        @for (coupon of availableCoupons; track coupon.code) {
+                          <div class="coupon-option-item" (click)="selectCoupon(coupon.code)">
+                            <div class="coupon-opt-header">
+                              <strong class="font-mono">{{ coupon.code }}</strong>
+                              <span class="badge-discount">{{ coupon.discount }}</span>
+                            </div>
+                            <p class="coupon-opt-desc">{{ coupon.description }}</p>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Coupon Input + APPLY Button -->
+                  <div class="coupon-input-row">
+                    <input 
+                      type="text" 
+                      class="coupon-text-input" 
+                      placeholder="Coupon Code Here" 
+                      [(ngModel)]="couponCode"
+                      (keyup.enter)="applyCoupon()"
+                    />
+                    <button type="button" class="btn-apply-navy" (click)="applyCoupon()">
+                      APPLY
+                    </button>
+                  </div>
+
+                  @if (appliedCoupon()) {
+                    <div class="applied-coupon-pill">
+                      <span>Applied: <strong>{{ appliedCoupon()?.code }}</strong> (-৳{{ discountAmount() | number:'1.0-0' }})</span>
+                      <button type="button" class="btn-remove-coupon" (click)="removeCoupon()">&times;</button>
+                    </div>
+                  }
+
+                </div>
+              }
+            </div>
+
+            <!-- Accordion Section 2: ESTIMATE SHIPPING & TAXES -->
+            <div class="accordion-item">
+              <button 
+                type="button" 
+                class="accordion-trigger" 
+                (click)="isShippingOpen.set(!isShippingOpen())"
+              >
+                <span class="accordion-icon-circle">{{ isShippingOpen() ? '⊖' : '⊕' }}</span>
+                <span class="accordion-label">ESTIMATE SHIPPING & TAXES</span>
+              </button>
+
+              @if (isShippingOpen()) {
+                <div class="accordion-content">
+                  <div class="shipping-select-wrap">
+                    <label class="shipping-label">Destination Division:</label>
+                    <select [(ngModel)]="selectedDivision" class="shipping-select">
+                      <option value="Dhaka">Inside Dhaka (৳80)</option>
+                      <option value="Outside">Outside Dhaka (৳130)</option>
+                    </select>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Accordion Section 3: USE GIFT CARD -->
+            <div class="accordion-item">
+              <button 
+                type="button" 
+                class="accordion-trigger" 
+                (click)="isGiftCardOpen.set(!isGiftCardOpen())"
+              >
+                <span class="accordion-icon-circle">{{ isGiftCardOpen() ? '⊖' : '⊕' }}</span>
+                <span class="accordion-label">USE GIFT CARD</span>
+              </button>
+
+              @if (isGiftCardOpen()) {
+                <div class="accordion-content">
+                  <div class="coupon-input-row">
+                    <input type="text" class="coupon-text-input" placeholder="Gift Card Code" />
+                    <button type="button" class="btn-apply-navy">APPLY</button>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Financial Breakdown Table (Matches Screenshot) -->
+            <div class="financial-breakdown-card">
+              <div class="breakdown-line">
+                <span class="label-text">Sub-Total:</span>
+                <span class="amount-text font-mono">{{ cartService.subtotal() | number:'1.0-0' }} BDT</span>
+              </div>
+
+              <div class="breakdown-line">
+                <span class="label-text">Discount:</span>
+                <span class="amount-text font-mono">{{ discountAmount() | number:'1.2-2' }} BDT</span>
+              </div>
+
+              <div class="breakdown-line">
+                <span class="label-text">VAT (7.5%):</span>
+                <span class="amount-text font-mono">{{ vatAmount() | number:'1.2-2' }} BDT</span>
+              </div>
+
+              <div class="breakdown-line total-highlight-line">
+                <span class="label-text total-label">Total:</span>
+                <span class="amount-text total-amount font-mono">{{ grandTotal() | number:'1.2-2' }} BDT</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: CONTINUE SHOPPING and CHECKOUT -->
+            <div class="summary-actions-grid">
+              <a routerLink="/" class="btn-navy-action">
+                CONTINUE SHOPPING
+              </a>
+
+              <button type="button" class="btn-navy-action" (click)="proceedToCheckout()">
+                CHECKOUT
+              </button>
+            </div>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

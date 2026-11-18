@@ -7,6 +7,7 @@ export interface User {
   email: string;
   avatar?: string | null;
   phone?: string | null;
+  address?: string | null;
   role: UserRole;
   status: UserStatus;
   oauth_provider: string;

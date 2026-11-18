@@ -57,6 +57,11 @@ export class AuthService {
     this.token.set(null);
   }
 
+  updateCurrentUser(user: User): void {
+    this.currentUser.set(user);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+  }
+
   private handleAuthSuccess(res: AuthResponse): void {
     if (res.success && res.data?.user) {
       this.currentUser.set(res.data.user);

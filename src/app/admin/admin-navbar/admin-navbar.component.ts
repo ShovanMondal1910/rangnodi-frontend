@@ -57,6 +57,10 @@ export class AdminNavbarComponent {
     return this.router.url.startsWith('/admin/customers');
   }
 
+  isOrdersActive(): boolean {
+    return this.router.url.startsWith('/admin/orders');
+  }
+
   toggleProductMenu(): void {
     this.isProductMenuOpen.update(v => !v);
   }

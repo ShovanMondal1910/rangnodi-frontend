@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-details',
@@ -16,6 +17,7 @@ export class ProductDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly productService = inject(ProductService);
   private readonly toast = inject(ToastService);
+  readonly cartService = inject(CartService);
 
   // Core State Signals
   readonly product = signal<any | null>(null);
@@ -31,7 +33,6 @@ export class ProductDetailsComponent implements OnInit {
   readonly selectedColor = signal<string>('Red');
   readonly selectedSize = signal<string>('S');
   readonly quantity = signal<number>(1);
-  readonly isWishlisted = signal<boolean>(false);
 
   // Accordion Sections State ('details' | 'sizeGuide' | 'storeAvailability' | null)
   readonly openAccordion = signal<string | null>(null);
@@ -151,29 +152,17 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-  toggleWishlist(): void {
-    this.isWishlisted.update(v => !v);
-    if (this.isWishlisted()) {
-      this.toast.success(`Saved "${this.product()?.title}" to your Wishlist!`);
-    } else {
-      this.toast.info(`Removed "${this.product()?.title}" from Wishlist.`);
-    }
-  }
-
   addToBag(): void {
     const p = this.product();
     if (!p) return;
-    this.toast.success(
-      `Added "${p.title}" (Color: ${this.selectedColor()}, Size: ${this.selectedSize()}) to your Bag!`
-    );
+    this.cartService.addToCart(p, this.quantity() || 1, this.selectedSize(), this.selectedColor());
   }
 
   buyNow(): void {
     const p = this.product();
     if (!p) return;
-    this.toast.success(
-      `Proceeding to checkout with "${p.title}" (Color: ${this.selectedColor()}, Size: ${this.selectedSize()})!`
-    );
+    this.cartService.addToCart(p, this.quantity() || 1, this.selectedSize(), this.selectedColor());
+    this.router.navigate(['/checkout']);
   }
 
   shareProduct(): void {

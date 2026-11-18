@@ -8,8 +8,14 @@ import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
 import { AddCustomerComponent } from './admin/add-customer/add-customer.component';
 import { EditCustomerComponent } from './admin/edit-customer/edit-customer.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
+import { OrderManagementComponent } from './admin/order-management/order-management.component';
+import { OrderInvoiceComponent } from './shared/order-invoice/order-invoice.component';
 import { FeaturedProductsComponent } from './features/featured-products/featured-products.component';
 import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
+import { ProfileComponent } from './features/profile/profile.component';
+import { CartPageComponent } from './features/cart/cart-page.component';
+import { CheckoutComponent } from './features/checkout/checkout.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -66,8 +72,49 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'admin/orders',
+    component: OrderManagementComponent,
+  },
+  {
+    path: 'admin/orders/invoice/:id',
+    component: OrderInvoiceComponent,
+  },
+  {
+    path: 'invoice/:id',
+    component: OrderInvoiceComponent,
+  },
+  {
+    path: 'admin/order-management',
+    redirectTo: 'admin/orders',
+    pathMatch: 'full',
+  },
+  {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'account',
+    redirectTo: 'profile',
+    pathMatch: 'full',
+  },
+  {
+    path: 'cart',
+    component: CartPageComponent,
+  },
+  {
+    path: 'bag',
+    redirectTo: 'cart',
+    pathMatch: 'full',
+  },
+  {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'signup',

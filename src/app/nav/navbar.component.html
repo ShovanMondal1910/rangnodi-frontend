@@ -14,7 +14,7 @@
 
         <nav class="top-right-links">
           @if (authService.isLoggedIn()) {
-            <a routerLink="/login" class="top-link font-medium">
+            <a routerLink="/profile" class="top-link font-medium">
               Account ({{ authService.currentUser()?.fullname }})
             </a>
           } @else {
@@ -23,9 +23,7 @@
           <span class="top-divider">|</span>
           <a href="javascript:void(0)" class="top-link">About Us</a>
           <span class="top-divider">|</span>
-          <a href="javascript:void(0)" class="top-link">My Wishlist</a>
-          <span class="top-divider">|</span>
-          <a href="javascript:void(0)" class="top-link">Cart</a>
+          <a routerLink="/cart" class="top-link">Cart ({{ cartService.totalQuantity() }})</a>
           <span class="top-divider">|</span>
           <a href="javascript:void(0)" class="top-link">Compare(0)</a>
         </nav>
@@ -107,27 +105,23 @@
           </a>
 
           <!-- Account Icon -->
-          <a routerLink="/login" class="nav-action-icon" [title]="authService.isLoggedIn() ? (authService.currentUser()?.fullname || 'Account') : 'Log In / Account'">
+          <a [routerLink]="authService.isLoggedIn() ? '/profile' : '/login'" class="nav-action-icon" [title]="authService.isLoggedIn() ? (authService.currentUser()?.fullname || 'Account') : 'Log In / Account'">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
           </a>
 
-          <!-- Wishlist Icon -->
-          <a href="javascript:void(0)" class="nav-action-icon" title="Wishlist">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-            </svg>
-          </a>
-
           <!-- Cart Icon -->
-          <a href="javascript:void(0)" class="nav-action-icon cart-icon-wrap" title="Shopping Cart">
+          <a routerLink="/cart" class="nav-action-icon cart-icon-wrap" title="Shopping Cart">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="9" cy="21" r="1"></circle>
               <circle cx="20" cy="21" r="1"></circle>
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
+            @if (cartService.totalQuantity() > 0) {
+              <span class="cart-badge-count">{{ cartService.totalQuantity() }}</span>
+            }
           </a>
         </div>
       </div>
@@ -345,7 +339,7 @@
        D. MOBILE BOTTOM NAVIGATION TAB BAR (Sailor Style Screenshot 1)
        ====================================================================== -->
   <nav class="mobile-bottom-tab-bar" aria-label="Mobile Navigation">
-    <!-- Home Tab -->
+    <!-- 1. Home Tab -->
     <a routerLink="/" class="bottom-tab-btn" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -354,37 +348,28 @@
       <span class="tab-caption">Home</span>
     </a>
 
-    <!-- Wishlist Tab -->
-    <a routerLink="/catalog" class="bottom-tab-btn" routerLinkActive="tab-active">
-      <div class="tab-icon-relative">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
-        <span class="tab-counter-badge">0</span>
-      </div>
-      <span class="tab-caption">Wishlist</span>
-    </a>
-
-    <!-- Cart Tab -->
-    <a routerLink="/catalog" class="bottom-tab-btn">
+    <!-- 2. Cart Tab -->
+    <a routerLink="/cart" class="bottom-tab-btn" routerLinkActive="tab-active">
       <div class="tab-icon-relative">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="9" cy="21" r="1"></circle>
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
-        <span class="tab-counter-badge">0</span>
+        @if (cartService.totalQuantity() > 0) {
+          <span class="tab-counter-badge">{{ cartService.totalQuantity() }}</span>
+        }
       </div>
       <span class="tab-caption">Cart</span>
     </a>
 
-    <!-- Account / Login Tab -->
-    <a routerLink="/login" class="bottom-tab-btn" routerLinkActive="tab-active">
+    <!-- 3. Account Tab -->
+    <a [routerLink]="authService.isLoggedIn() ? '/profile' : '/login'" class="bottom-tab-btn" routerLinkActive="tab-active">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
-      <span class="tab-caption">{{ authService.isLoggedIn() ? 'Account' : 'Login' }}</span>
+      <span class="tab-caption">Account</span>
     </a>
   </nav>
 

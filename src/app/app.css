@@ -74,6 +74,12 @@
   border-left: 4px solid #3b82f6;
 }
 
+.toast-warning {
+  background: #1e293b;
+  color: #ffffff;
+  border-left: 4px solid #f59e0b;
+}
+
 .toast-close {
   background: none;
   border: none;

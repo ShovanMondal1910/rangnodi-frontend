@@ -25,6 +25,7 @@ export interface CreateCustomerRequest {
   email: string;
   password?: string;
   phone?: string;
+  address?: string;
   status?: UserStatus;
   avatar?: string;
 }
@@ -34,6 +35,7 @@ export interface UpdateCustomerRequest {
   email?: string;
   password?: string;
   phone?: string;
+  address?: string;
   status?: UserStatus;
   avatar?: string;
 }

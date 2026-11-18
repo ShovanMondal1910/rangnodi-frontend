@@ -1,0 +1,465 @@
+<div class="profile-page-shell">
+  
+  <!-- Breadcrumb (Matches Screenshot: Home / Profile) -->
+  <div class="profile-container">
+    <div class="breadcrumb-trail">
+      <a routerLink="/" class="crumb-link">Home</a>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-current">Profile</span>
+    </div>
+  </div>
+
+  <div class="profile-container">
+    <div class="profile-layout-grid">
+      
+      <!-- =====================================================================
+           LEFT SIDEBAR (Matches Screenshot: Hello, Profile, Orders, Cart, etc.)
+           ===================================================================== -->
+      <aside class="profile-sidebar">
+        <div class="sidebar-greeting-box">
+          <span class="greeting-sub">Hello,</span>
+          <h3 class="greeting-user-name">{{ fullname || authService.currentUser()?.fullname || 'Customer' }}</h3>
+        </div>
+
+        <nav class="sidebar-nav-menu">
+          
+          <!-- 1. Profile -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'profile'"
+            (click)="onTabClick('profile')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profile</span>
+          </button>
+
+          <!-- 2. Orders -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'orders'"
+            (click)="onTabClick('orders')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>Orders</span>
+          </button>
+
+          <!-- 3. Cart -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            (click)="onTabClick('cart')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span>Cart ({{ cartService.totalQuantity() }})</span>
+          </button>
+
+          <!-- 4. Request Stock -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'request-stock'"
+            (click)="onTabClick('request-stock')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Request Stock</span>
+          </button>
+
+          <!-- 6. Address Book -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'address-book'"
+            (click)="onTabClick('address-book')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Address Book</span>
+          </button>
+
+          <!-- 7. Notifications -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'notifications'"
+            (click)="onTabClick('notifications')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span>Notifications</span>
+          </button>
+
+          <!-- 8. Reviews -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'reviews'"
+            (click)="onTabClick('reviews')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Reviews</span>
+          </button>
+
+          <!-- 9. Subscribe -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'subscribe'"
+            (click)="onTabClick('subscribe')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <span>Subscribe</span>
+          </button>
+
+          <!-- 10. Change Password -->
+          <button 
+            type="button" 
+            class="nav-tab-btn" 
+            [class.active]="activeTab() === 'change-password'"
+            (click)="onTabClick('change-password')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Change Password</span>
+          </button>
+
+          <!-- 11. Account Delete -->
+          <button 
+            type="button" 
+            class="nav-tab-btn btn-danger-tab" 
+            [class.active]="activeTab() === 'account-delete'"
+            (click)="onTabClick('account-delete')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="18" y1="8" x2="23" y2="13"></line>
+              <line x1="23" y1="8" x2="18" y2="13"></line>
+            </svg>
+            <span>Account Delete</span>
+          </button>
+
+          <!-- 12. Logout -->
+          <button 
+            type="button" 
+            class="nav-tab-btn btn-logout-tab" 
+            (click)="onTabClick('logout')"
+          >
+            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+              <line x1="12" y1="2" x2="12" y2="12"></line>
+            </svg>
+            <span>Logout</span>
+          </button>
+
+        </nav>
+      </aside>
+
+
+      <!-- =====================================================================
+           RIGHT MAIN CONTENT CARD (Matches Screenshot)
+           ===================================================================== -->
+      <main class="profile-main-content">
+        
+        <!-- Tab 1: PERSONAL INFORMATION (The Exact View in Screenshot) -->
+        @if (activeTab() === 'profile') {
+          <div class="content-card">
+            
+            <!-- Floating Pill Badge: PERSONAL INFORMATION -->
+            <div class="card-pill-wrap">
+              <span class="card-pill">PERSONAL INFORMATION</span>
+            </div>
+
+            <form (ngSubmit)="updateProfile()" class="profile-form">
+              
+              <!-- 1. Name -->
+              <div class="form-group">
+                <label class="field-label" for="inputName">Name</label>
+                <input
+                  id="inputName"
+                  type="text"
+                  class="form-input"
+                  [(ngModel)]="fullname"
+                  name="fullname"
+                  placeholder="Full Name"
+                  required
+                />
+              </div>
+
+              <!-- 2. Phone number * & Email address -->
+              <div class="form-grid-2">
+                
+                <div class="form-group">
+                  <label class="field-label" for="inputPhone">
+                    Phone number <span class="required-asterisk">*</span>
+                  </label>
+                  <input
+                    id="inputPhone"
+                    type="tel"
+                    class="form-input font-mono"
+                    [(ngModel)]="phone"
+                    name="phone"
+                    placeholder="01976192554"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="field-label" for="inputEmail">Email address</label>
+                  <input
+                    id="inputEmail"
+                    type="email"
+                    class="form-input readonly-input font-mono"
+                    [value]="email"
+                    readonly
+                    title="Email is fixed for account verification"
+                  />
+                </div>
+
+              </div>
+
+              <!-- 3. Address * -->
+              <div class="form-group">
+                <label class="field-label" for="inputAddress">
+                  Address <span class="required-asterisk">*</span>
+                </label>
+                <textarea
+                  id="inputAddress"
+                  class="form-textarea"
+                  [(ngModel)]="address"
+                  name="address"
+                  rows="4"
+                  placeholder="Address Details"
+                ></textarea>
+              </div>
+
+              <!-- 4. Update Button (Navy/Slate button matching screenshot) -->
+              <div class="form-submit-row">
+                <button 
+                  type="submit" 
+                  class="btn-update" 
+                  [disabled]="isSubmitting()"
+                >
+                  @if (isSubmitting()) {
+                    <span class="btn-spinner"></span>
+                    <span>UPDATING...</span>
+                  } @else {
+                    <span>UPDATE</span>
+                  }
+                </button>
+              </div>
+
+            </form>
+
+          </div>
+        }
+
+        <!-- Tab 2: Change Password -->
+        @if (activeTab() === 'change-password') {
+          <div class="content-card">
+            <div class="card-pill-wrap">
+              <span class="card-pill">CHANGE PASSWORD</span>
+            </div>
+
+            <form (ngSubmit)="updatePassword()" class="profile-form">
+              <div class="form-group">
+                <label class="field-label" for="newPass">New Password <span class="required-asterisk">*</span></label>
+                <input
+                  id="newPass"
+                  type="password"
+                  class="form-input"
+                  [(ngModel)]="newPassword"
+                  name="newPassword"
+                  placeholder="Minimum 6 characters"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="confirmPass">Confirm New Password <span class="required-asterisk">*</span></label>
+                <input
+                  id="confirmPass"
+                  type="password"
+                  class="form-input"
+                  [(ngModel)]="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Re-type new password"
+                  required
+                />
+              </div>
+
+              <div class="form-submit-row">
+                <button type="submit" class="btn-update" [disabled]="isSubmitting()">
+                  <span>CHANGE PASSWORD</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Tab 3: Orders View -->
+        @if (activeTab() === 'orders') {
+          <div class="content-card">
+            <div class="card-pill-wrap">
+              <span class="card-pill">YOUR ORDERS ({{ orders().length }})</span>
+            </div>
+
+            @if (isLoadingOrders()) {
+              <div class="orders-loading-wrap">
+                <span class="btn-spinner-dark"></span>
+                <p>Loading your orders...</p>
+              </div>
+            } @else if (orders().length === 0) {
+              <div class="tab-empty-box">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <h4>No orders placed yet</h4>
+                <p>When you complete a purchase, your tracked deliveries will show up here.</p>
+                <a routerLink="/" class="btn-shop-now">Start Shopping</a>
+              </div>
+            } @else {
+              <div class="orders-list-wrap">
+                @for (order of orders(); track order.order_id) {
+                  <div class="order-item-card">
+                    
+                    <!-- Header -->
+                    <div class="order-card-header">
+                      <div class="order-header-left">
+                        <span class="order-id-label">ORDER ID:</span>
+                        <strong class="order-id-code font-mono">{{ order.order_id }}</strong>
+                        <span class="order-date-text">{{ order.created_at | date:'medium' }}</span>
+                      </div>
+                      <div class="order-header-right">
+                        <span class="badge-status status-{{ order.order_status | lowercase }}">
+                          {{ order.order_status | uppercase }}
+                        </span>
+                        <span class="badge-payment">
+                          {{ order.payment_method | uppercase }} ({{ order.payment_status | uppercase }})
+                        </span>
+                        <a [routerLink]="['/invoice', order.order_id]" target="_blank" class="btn-invoice-link" title="View & Print Invoice">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                          </svg>
+                          <span>Invoice</span>
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- Ordered Products -->
+                    <div class="order-products-table">
+                      @for (item of order.items; track item.id) {
+                        <div class="order-product-row">
+                          <div class="order-prod-thumb">
+                            <img [src]="item.image_url" [alt]="item.product_title" (error)="onImageError($event)" />
+                          </div>
+                          <div class="order-prod-details">
+                            <h5 class="order-prod-title">{{ item.product_title }}</h5>
+                            <div class="order-prod-meta">
+                              @if (item.selected_color) {
+                                <span>Color: <strong>{{ item.selected_color }}</strong></span>
+                              }
+                              @if (item.selected_size) {
+                                <span>Size: <strong>{{ item.selected_size }}</strong></span>
+                              }
+                              @if (item.sku) {
+                                <span>SKU: <strong class="font-mono">{{ item.sku }}</strong></span>
+                              }
+                            </div>
+                          </div>
+                          <div class="order-prod-price text-right">
+                            <span class="order-prod-qty">Qty: {{ item.quantity }}</span>
+                            <strong class="order-prod-total font-mono">৳{{ (item.unit_price * item.quantity) | number:'1.2-2' }}</strong>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Footer Details -->
+                    <div class="order-card-footer">
+                      <div class="order-delivery-snippet">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                          <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Delivery to: <strong>{{ order.delivery_address }}</strong> (Phone: {{ order.phone }})</span>
+                      </div>
+                      <div class="order-total-snippet">
+                        <span class="total-label">Grand Total:</span>
+                        <strong class="total-val font-mono">৳{{ order.total_amount | number:'1.2-2' }}</strong>
+                      </div>
+                    </div>
+
+                  </div>
+                }
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- Tab 4: Address Book -->
+        @if (activeTab() === 'address-book') {
+          <div class="content-card">
+            <div class="card-pill-wrap">
+              <span class="card-pill">ADDRESS BOOK</span>
+            </div>
+            <div class="address-preview-box">
+              <h5>Primary Delivery Address</h5>
+              <p class="address-text">{{ address || 'No default delivery address entered yet. Please update in your profile.' }}</p>
+              <button type="button" class="btn-edit-address" (click)="activeTab.set('profile')">Edit Address</button>
+            </div>
+          </div>
+        }
+
+        <!-- Tab 5: Other Views (Request Stock, Notifications, Reviews, Subscribe, Delete) -->
+        @if (['request-stock', 'notifications', 'reviews', 'subscribe', 'account-delete'].includes(activeTab())) {
+          <div class="content-card">
+            <div class="card-pill-wrap">
+              <span class="card-pill">{{ activeTab().toUpperCase().replace('-', ' ') }}</span>
+            </div>
+            <div class="tab-empty-box">
+              <h4>{{ activeTab().replace('-', ' ') | titlecase }}</h4>
+              <p>This section is connected to your registered customer account ({{ authService.currentUser()?.email }}).</p>
+            </div>
+          </div>
+        }
+
+      </main>
+
+    </div>
+  </div>
+
+</div>

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CatalogService } from '../core/services/catalog.service';
 import { AuthService } from '../core/services/auth.service';
+import { CartService } from '../core/services/cart.service';
 import { CategoryHierarchyItem, Subcategory } from '../core/models/catalog.models';
 
 export interface GroupedSubcategories {
@@ -22,6 +23,7 @@ export class NavbarComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly router = inject(Router);
   readonly authService = inject(AuthService);
+  readonly cartService = inject(CartService);
 
   readonly categories = signal<CategoryHierarchyItem[]>([]);
   readonly activeCategory = signal<CategoryHierarchyItem | null>(null);

@@ -389,30 +389,6 @@
   background-color: #b91c1c;
 }
 
-.btn-wishlist-toggle {
-  width: 48px;
-  height: 48px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
-}
-
-.btn-wishlist-toggle:hover {
-  border-color: #cbd5e1;
-  background-color: #f8fafc;
-}
-
-.btn-wishlist-toggle.active {
-  border-color: #fee2e2;
-  background-color: #fef2f2;
-}
-
 /* Fast Shipping & COD Row */
 .perks-row {
   display: flex;
