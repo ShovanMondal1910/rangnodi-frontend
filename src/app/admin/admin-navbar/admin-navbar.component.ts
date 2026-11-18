@@ -18,6 +18,7 @@ export class AdminNavbarComponent {
 
   isProductMenuOpen = signal<boolean>(false);
   isCategoriesMenuOpen = signal<boolean>(false);
+  isAdminMenuOpen = signal<boolean>(false);
 
   get adminName(): string {
     return this.authService.currentUser()?.fullname || 'Shovan Mondal';
@@ -73,6 +74,18 @@ export class AdminNavbarComponent {
 
   closeCategoriesMenu(): void {
     this.isCategoriesMenuOpen.set(false);
+  }
+
+  toggleAdminMenu(): void {
+    this.isAdminMenuOpen.update(v => !v);
+  }
+
+  openAdminMenu(): void {
+    this.isAdminMenuOpen.set(true);
+  }
+
+  closeAdminMenu(): void {
+    this.isAdminMenuOpen.set(false);
   }
 
   onLogout(): void {

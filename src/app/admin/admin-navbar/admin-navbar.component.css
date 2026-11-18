@@ -240,6 +240,18 @@
   border: 1px solid #d1fae5;
 }
 
+.user-add-icon {
+  background-color: #faf5ff;
+  color: #9333ea;
+  border: 1px solid #f3e8ff;
+}
+
+.user-edit-icon {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
 .link-text-block {
   display: flex;
   flex-direction: column;
