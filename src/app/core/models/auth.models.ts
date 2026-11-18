@@ -29,9 +29,10 @@ export interface SignupRequest {
 }
 
 export interface GoogleLoginRequest {
-  googleId: string;
-  email: string;
-  fullname: string;
+  credential?: string;
+  googleId?: string;
+  email?: string;
+  fullname?: string;
   avatar?: string;
 }
 

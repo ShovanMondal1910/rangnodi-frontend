@@ -1,9 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { ToastService } from '../core/services/toast.service';
+import { environment } from '../../environments/environment';
+
+declare const google: any;
 
 @Component({
   selector: 'app-login',
@@ -12,7 +15,7 @@ import { ToastService } from '../core/services/toast.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, AfterViewInit {
   authService = inject(AuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
@@ -22,6 +25,7 @@ export class LoginComponent {
   activeTab = signal<'login' | 'signup'>('login');
   isLoading = signal<boolean>(false);
   showPassword = signal<boolean>(false);
+  isGoogleLoaded = signal<boolean>(false);
 
   // Login form fields
   loginEmail = '';
@@ -37,7 +41,6 @@ export class LoginComponent {
   agreeTerms = true;
 
   constructor() {
-    // Check if query params specify mode (e.g. /login?mode=signup)
     this.route.queryParams.subscribe(params => {
       if (params['mode'] === 'signup') {
         this.activeTab.set('signup');
@@ -47,20 +50,105 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    this.initGoogleAuth();
+  }
+
   setTab(tab: 'login' | 'signup'): void {
     this.activeTab.set(tab);
+    setTimeout(() => this.renderGoogleButton(), 50);
   }
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
   }
 
+  private initGoogleAuth(): void {
+    const checkGoogle = () => {
+      if (typeof google !== 'undefined' && google.accounts?.id) {
+        try {
+          google.accounts.id.initialize({
+            client_id: environment.googleClientId,
+            callback: (res: any) => this.handleGoogleCredential(res.credential),
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+
+          this.renderGoogleButton();
+          this.isGoogleLoaded.set(true);
+
+          // Trigger One-Tap prompt if eligible
+          google.accounts.id.prompt();
+        } catch (e) {
+          console.warn('Google Identity initialization error:', e);
+        }
+      } else {
+        setTimeout(checkGoogle, 200);
+      }
+    };
+
+    checkGoogle();
+  }
+
+  private renderGoogleButton(): void {
+    if (typeof google === 'undefined' || !google.accounts?.id) return;
+    const btnContainer = document.getElementById('googleSignInButton');
+    if (btnContainer) {
+      btnContainer.innerHTML = '';
+      google.accounts.id.renderButton(btnContainer, {
+        type: 'standard',
+        shape: 'rectangular',
+        theme: 'outline',
+        text: this.activeTab() === 'login' ? 'signin_with' : 'signup_with',
+        size: 'large',
+        logo_alignment: 'left',
+        width: 380,
+      });
+    }
+  }
+
+  handleGoogleCredential(credential: string): void {
+    if (!credential) return;
+
+    this.isLoading.set(true);
+    this.authService.googleLogin({ credential }).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        this.toastService.success(`Welcome to Rangnodi, ${res.data.user.fullname}!`);
+        if (res.data.user.role === 'admin') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['/']);
+        }
+      },
+      error: (err: any) => {
+        this.isLoading.set(false);
+        const msg = err?.error?.message || 'Google authentication failed';
+        this.toastService.error(msg);
+      }
+    });
+  }
+
+  onGoogleSignInFallback(): void {
+    if (typeof google !== 'undefined' && google.accounts?.id) {
+      google.accounts.id.prompt();
+    } else {
+      this.toastService.info('Loading Google Sign-In, please wait a moment...');
+    }
+  }
+
   /**
    * Handle Email/Password Login
    */
   onLoginSubmit(): void {
-    if (!this.loginEmail || !this.loginPassword) {
-      this.toastService.show('Please fill in both email and password', 'error');
+    if (!this.loginEmail || !this.loginEmail.includes('@')) {
+      this.toastService.error('Please enter a valid email address');
+      return;
+    }
+    if (!this.loginPassword) {
+      this.toastService.error('Please enter your password');
       return;
     }
 
@@ -72,8 +160,6 @@ export class LoginComponent {
       next: (res) => {
         this.isLoading.set(false);
         this.toastService.success(`Welcome back, ${res.data.user.fullname}!`);
-        
-        // Redirect based on role or home
         if (res.data.user.role === 'admin') {
           this.router.navigate(['/admin/dashboard']);
         } else {
@@ -82,21 +168,21 @@ export class LoginComponent {
       },
       error: (err: any) => {
         this.isLoading.set(false);
-        const msg = err?.error?.message || 'Login failed. Please check your credentials.';
+        const msg = err?.error?.message || 'Invalid email or password';
         this.toastService.error(msg);
       }
     });
   }
 
   /**
-   * Handle Customer Registration (Sign Up)
+   * Handle Customer Registration / Sign Up
    */
   onSignupSubmit(): void {
     if (!this.signupFullname.trim()) {
-      this.toastService.error('Full name is required');
+      this.toastService.error('Please enter your full name');
       return;
     }
-    if (!this.signupEmail.trim() || !this.signupEmail.includes('@')) {
+    if (!this.signupEmail || !this.signupEmail.includes('@')) {
       this.toastService.error('Valid email address is required');
       return;
     }
@@ -131,41 +217,6 @@ export class LoginComponent {
         this.toastService.error(msg);
       }
     });
-  }
-
-  /**
-   * Handle Google One-Click Login / Sign Up
-   */
-  onGoogleSignIn(): void {
-    this.isLoading.set(true);
-
-    // Google Sign-In simulation / OAuth callback integration
-    // When real Google Client ID is configured, window.google.accounts.id.prompt() is invoked.
-    setTimeout(() => {
-      const mockGoogleUser = {
-        googleId: 'g_' + Math.floor(1000000000 + Math.random() * 9000000000),
-        email: this.loginEmail || this.signupEmail || 'google.customer@rangnodi.com',
-        fullname: this.signupFullname || 'Google Customer',
-        avatar: 'https://lh3.googleusercontent.com/a/default-user'
-      };
-
-      this.authService.googleLogin(mockGoogleUser).subscribe({
-        next: (res) => {
-          this.isLoading.set(false);
-          this.toastService.success(`Signed in with Google as ${res.data.user.fullname}`);
-          if (res.data.user.role === 'admin') {
-            this.router.navigate(['/admin/dashboard']);
-          } else {
-            this.router.navigate(['/']);
-          }
-        },
-        error: (err: any) => {
-          this.isLoading.set(false);
-          const msg = err?.error?.message || 'Google Sign-In failed';
-          this.toastService.error(msg);
-        }
-      });
-    }, 600);
   }
 
   onSignOut(): void {
