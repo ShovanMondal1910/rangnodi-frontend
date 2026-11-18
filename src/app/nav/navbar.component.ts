@@ -26,6 +26,12 @@ export class NavbarComponent implements OnInit {
   readonly categories = signal<CategoryHierarchyItem[]>([]);
   readonly activeCategory = signal<CategoryHierarchyItem | null>(null);
   readonly isMegaMenuOpen = signal<boolean>(false);
+  readonly isScrolled = signal<boolean>(false);
+
+  // Mobile Drawer & Search State (Sailor style)
+  readonly isMobileDrawerOpen = signal<boolean>(false);
+  readonly isMobileSearchOpen = signal<boolean>(false);
+  readonly expandedDrawerCat = signal<string | null>(null);
 
   // Search state
   searchQuery = '';
@@ -33,6 +39,33 @@ export class NavbarComponent implements OnInit {
   showCategoryPicker = false;
 
   private closeMenuTimer: any = null;
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    if (typeof window !== 'undefined') {
+      this.isScrolled.set(window.scrollY > 100);
+    }
+  }
+
+  toggleDrawer(): void {
+    this.isMobileDrawerOpen.update((open) => !open);
+  }
+
+  closeDrawer(): void {
+    this.isMobileDrawerOpen.set(false);
+  }
+
+  toggleMobileSearch(): void {
+    this.isMobileSearchOpen.update((open) => !open);
+  }
+
+  toggleDrawerCat(catId: string): void {
+    if (this.expandedDrawerCat() === catId) {
+      this.expandedDrawerCat.set(null);
+    } else {
+      this.expandedDrawerCat.set(catId);
+    }
+  }
 
   ngOnInit(): void {
     this.loadCatalog();

@@ -1,205 +1,391 @@
 <header class="navbar-wrapper">
-  <!-- 1. TOP UTILITY BAR -->
-  <div class="top-utility-bar">
-    <div class="nav-container top-utility-content">
-      <div class="top-left-slogan">
-        <span>Selling Life</span>
-      </div>
 
-      <nav class="top-right-links">
-        @if (authService.isLoggedIn()) {
-          <a routerLink="/login" class="top-link font-medium">
-            Account ({{ authService.currentUser()?.fullname }})
-          </a>
-        } @else {
-          <a routerLink="/login" class="top-link">Log In</a>
-        }
-        <span class="top-divider">|</span>
-        <a href="javascript:void(0)" class="top-link">About Us</a>
-        <span class="top-divider">|</span>
-        <a href="javascript:void(0)" class="top-link">My Wishlist</a>
-        <span class="top-divider">|</span>
-        <a href="javascript:void(0)" class="top-link">Cart</a>
-        <span class="top-divider">|</span>
-        <a href="javascript:void(0)" class="top-link">Compare(0)</a>
-      </nav>
-    </div>
-  </div>
-
-  <!-- 2. MAIN BRAND & SEARCH BAR -->
-  <div class="main-nav-bar">
-    <div class="nav-container main-nav-content">
-      <!-- Brand Logo -->
-      <a routerLink="/" class="brand-logo-wrap">
-        <div class="brand-emblem">
-          <img src="/icons/logo.jpeg" alt="Rangnodi Logo" class="brand-logo-img" />
+  <!-- ======================================================================
+       A. DESKTOP STOREFRONT NAVBAR (Screens > 768px)
+       ====================================================================== -->
+  <div class="desktop-nav-wrap">
+    
+    <!-- 1. TOP UTILITY BAR -->
+    <div class="top-utility-bar">
+      <div class="nav-container top-utility-content">
+        <div class="top-left-slogan">
+          <span>Selling Life</span>
         </div>
-        <span class="brand-name">Rangnodi</span>
-      </a>
 
-      <!-- Center Search Pill -->
-      <div class="search-pill-box">
-        <form (ngSubmit)="onSearchSubmit()" class="search-form">
-          <input
-            type="text"
-            class="search-pill-input"
-            placeholder="Search by category..."
-            [(ngModel)]="searchQuery"
-            name="searchQuery"
-          />
+        <nav class="top-right-links">
+          @if (authService.isLoggedIn()) {
+            <a routerLink="/login" class="top-link font-medium">
+              Account ({{ authService.currentUser()?.fullname }})
+            </a>
+          } @else {
+            <a routerLink="/login" class="top-link">Log In</a>
+          }
+          <span class="top-divider">|</span>
+          <a href="javascript:void(0)" class="top-link">About Us</a>
+          <span class="top-divider">|</span>
+          <a href="javascript:void(0)" class="top-link">My Wishlist</a>
+          <span class="top-divider">|</span>
+          <a href="javascript:void(0)" class="top-link">Cart</a>
+          <span class="top-divider">|</span>
+          <a href="javascript:void(0)" class="top-link">Compare(0)</a>
+        </nav>
+      </div>
+    </div>
 
-          <!-- Categories Dropdown Button -->
-          <div class="search-category-dropdown">
-            <button
-              type="button"
-              class="category-picker-btn"
-              (click)="showCategoryPicker = !showCategoryPicker; $event.stopPropagation()"
-            >
-              <span>{{ selectedSearchCategory }}</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
+    <!-- 2. MAIN BRAND & SEARCH BAR -->
+    <div class="main-nav-bar">
+      <div class="nav-container main-nav-content">
+        <!-- Brand Logo -->
+        <a routerLink="/" class="brand-logo-wrap">
+          <div class="brand-emblem">
+            <img src="/icons/logo.jpeg" alt="Rangnodi Logo" class="brand-logo-img" />
+          </div>
+          <span class="brand-name">Rangnodi</span>
+        </a>
+
+        <!-- Center Search Pill -->
+        <div class="search-pill-box">
+          <form (ngSubmit)="onSearchSubmit()" class="search-form">
+            <input
+              type="text"
+              class="search-pill-input"
+              placeholder="Search by category..."
+              [(ngModel)]="searchQuery"
+              name="searchQuery"
+            />
+
+            <!-- Categories Dropdown Button -->
+            <div class="search-category-dropdown">
+              <button
+                type="button"
+                class="category-picker-btn"
+                (click)="showCategoryPicker = !showCategoryPicker; $event.stopPropagation()"
+              >
+                <span>{{ selectedSearchCategory }}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+
+              @if (showCategoryPicker) {
+                <div class="category-picker-menu">
+                  <div class="category-picker-item" (click)="selectCategoryFilter('All Categories')">
+                    All Categories
+                  </div>
+                  @for (c of categories(); track c.category_id) {
+                    <div class="category-picker-item" (click)="selectCategoryFilter(c.name)">
+                      {{ c.name }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Search Button -->
+            <button type="submit" class="search-submit-btn" title="Search">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
+          </form>
+        </div>
 
-            @if (showCategoryPicker) {
-              <div class="category-picker-menu">
-                <div class="category-picker-item" (click)="selectCategoryFilter('All Categories')">
-                  All Categories
-                </div>
-                @for (c of categories(); track c.category_id) {
-                  <div class="category-picker-item" (click)="selectCategoryFilter(c.name)">
-                    {{ c.name }}
-                  </div>
-                }
-              </div>
-            }
-          </div>
+        <!-- Right Contact & Icons -->
+        <div class="nav-right-actions">
+          <!-- Phone Pill -->
+          <a href="tel:01777702000" class="call-us-pill">
+            <div class="phone-circle-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div class="call-us-info">
+              <span class="call-subtitle">Call Us Now:</span>
+              <span class="call-number font-mono">01777702000</span>
+            </div>
+          </a>
 
-          <!-- Search Button -->
-          <button type="submit" class="search-submit-btn" title="Search">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <!-- Account Icon -->
+          <a routerLink="/login" class="nav-action-icon" [title]="authService.isLoggedIn() ? (authService.currentUser()?.fullname || 'Account') : 'Log In / Account'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
             </svg>
-          </button>
-        </form>
-      </div>
+          </a>
 
-      <!-- Right Contact & Icons -->
-      <div class="nav-right-actions">
-        <!-- Phone Pill -->
-        <a href="tel:01777702000" class="call-us-pill">
-          <div class="phone-circle-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          <!-- Wishlist Icon -->
+          <a href="javascript:void(0)" class="nav-action-icon" title="Wishlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
-          </div>
-          <div class="call-us-info">
-            <span class="call-subtitle">Call Us Now:</span>
-            <span class="call-number font-mono">01777702000</span>
-          </div>
-        </a>
+          </a>
 
-        <!-- Account Icon -->
-        <a routerLink="/login" class="nav-action-icon" [title]="authService.isLoggedIn() ? (authService.currentUser()?.fullname || 'Account') : 'Log In / Account'">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-        </a>
-
-        <!-- Wishlist Icon -->
-        <a href="javascript:void(0)" class="nav-action-icon" title="Wishlist">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-        </a>
-
-        <!-- Cart Icon -->
-        <a href="javascript:void(0)" class="nav-action-icon cart-icon-wrap" title="Shopping Cart">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-        </a>
+          <!-- Cart Icon -->
+          <a href="javascript:void(0)" class="nav-action-icon cart-icon-wrap" title="Shopping Cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
+
+    <!-- 3. CATEGORY NAVIGATION ROW (Sticky on Scroll) -->
+    <nav class="category-nav-bar" [class.is-sticky]="isScrolled()">
+      <div class="nav-container category-nav-container">
+        <ul class="category-menu-list">
+          @for (cat of categories(); track cat.category_id) {
+            <li
+              class="category-menu-item"
+              [class.item-active]="activeCategory()?.category_id === cat.category_id"
+              (mouseenter)="onCategoryEnter(cat)"
+              (mouseleave)="onCategoryLeave()"
+              (click)="onCategoryTouch(cat, $event)"
+            >
+              <a
+                [routerLink]="['/catalog']"
+                [queryParams]="{ category: cat.category_id }"
+                class="category-nav-link"
+              >
+                <span class="cat-name">{{ cat.name }}</span>
+                @if (cat.badge) {
+                  <span class="nav-badge" [class.badge-hot]="cat.badge === 'HOT'" [class.badge-new]="cat.badge === 'NEW'">
+                    {{ cat.badge }}
+                  </span>
+                }
+              </a>
+
+              <!-- Active Underline indicator -->
+              <div
+                class="active-indicator"
+                [class.indicator-visible]="activeCategory()?.category_id === cat.category_id"
+              ></div>
+            </li>
+          }
+        </ul>
+      </div>
+    </nav>
+
+    <!-- 4. EXPANDABLE MEGA MENU PANEL (On Hover / Touch) -->
+    @if (isMegaMenuOpen() && activeCategory()) {
+      <div
+        class="mega-menu-overlay"
+        (mouseenter)="onMegaMenuEnter()"
+        (mouseleave)="onMegaMenuLeave()"
+      >
+        <div class="nav-container mega-menu-container">
+          @let groups = getGroupedSubcategories(activeCategory());
+          @if (groups.length > 0) {
+            <div class="mega-menu-grid">
+              @for (grp of groups; track grp.groupName) {
+                <div class="mega-group-column">
+                  <h4 class="mega-group-title">{{ grp.groupName }}</h4>
+                  <ul class="mega-sub-list">
+                    @for (sub of grp.items; track sub.subcategory_id) {
+                      <li class="mega-sub-item">
+                        <a
+                          [routerLink]="['/catalog']"
+                          [queryParams]="{ category: activeCategory()?.category_id, subcategory: sub.subcategory_id }"
+                          class="mega-sub-link"
+                          (click)="isMegaMenuOpen.set(false)"
+                        >
+                          {{ sub.name }}
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="mega-menu-empty">
+              <span>Explore all {{ activeCategory()?.name }} collection items in store catalog.</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
   </div>
 
-  <!-- 3. CATEGORY NAVIGATION ROW -->
-  <nav class="category-nav-bar">
-    <div class="nav-container category-nav-container">
-      <ul class="category-menu-list">
-        @for (cat of categories(); track cat.category_id) {
-          <li
-            class="category-menu-item"
-            [class.item-active]="activeCategory()?.category_id === cat.category_id"
-            (mouseenter)="onCategoryEnter(cat)"
-            (mouseleave)="onCategoryLeave()"
-            (click)="onCategoryTouch(cat, $event)"
-          >
-            <a
-              [routerLink]="['/catalog']"
-              [queryParams]="{ category: cat.category_id }"
-              class="category-nav-link"
-            >
-              <span class="cat-name">{{ cat.name }}</span>
-              @if (cat.badge) {
-                <span class="nav-badge" [class.badge-hot]="cat.badge === 'HOT'" [class.badge-new]="cat.badge === 'NEW'">
-                  {{ cat.badge }}
-                </span>
-              }
-            </a>
+  <!-- ======================================================================
+       B. MOBILE HEADER BAR (Screens <= 768px, Sailor Style Screenshot 1)
+       ====================================================================== -->
+  <div class="mobile-header-bar">
+    <!-- Left Hamburger Icon -->
+    <button type="button" class="btn-mobile-nav" (click)="toggleDrawer()" aria-label="Open Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
 
-            <!-- Active Underline indicator -->
-            <div
-              class="active-indicator"
-              [class.indicator-visible]="activeCategory()?.category_id === cat.category_id"
-            ></div>
-          </li>
-        }
-      </ul>
+    <!-- Center Brand Logo -->
+    <a routerLink="/" class="mobile-brand-link">
+      <img src="/icons/logo.jpeg" alt="Rangnodi Logo" class="mobile-logo-emblem" />
+      <span class="mobile-brand-title">Rangnodi</span>
+    </a>
+
+    <!-- Right Search Icon -->
+    <button type="button" class="btn-mobile-nav" (click)="toggleMobileSearch()" aria-label="Search">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Collapsible Search Tray -->
+  @if (isMobileSearchOpen()) {
+    <div class="mobile-search-tray">
+      <form (ngSubmit)="onSearchSubmit(); isMobileSearchOpen.set(false)" class="mobile-search-form">
+        <input
+          type="text"
+          class="mobile-search-input"
+          placeholder="Search panjabis, festive wear, accessories..."
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          autofocus
+        />
+        <button type="submit" class="btn-mobile-search-go" aria-label="Submit search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </form>
     </div>
-  </nav>
+  }
 
-  <!-- 4. EXPANDABLE MEGA MENU PANEL (On Hover / Touch) -->
-  @if (isMegaMenuOpen() && activeCategory()) {
-    <div
-      class="mega-menu-overlay"
-      (mouseenter)="onMegaMenuEnter()"
-      (mouseleave)="onMegaMenuLeave()"
-    >
-      <div class="nav-container mega-menu-container">
-        @let groups = getGroupedSubcategories(activeCategory());
-        @if (groups.length > 0) {
-          <div class="mega-menu-grid">
-            @for (grp of groups; track grp.groupName) {
-              <div class="mega-group-column">
-                <h4 class="mega-group-title">{{ grp.groupName }}</h4>
-                <ul class="mega-sub-list">
-                  @for (sub of grp.items; track sub.subcategory_id) {
-                    <li class="mega-sub-item">
-                      <a
-                        [routerLink]="['/catalog']"
-                        [queryParams]="{ category: activeCategory()?.category_id, subcategory: sub.subcategory_id }"
-                        class="mega-sub-link"
-                        (click)="isMegaMenuOpen.set(false)"
-                      >
-                        {{ sub.name }}
-                      </a>
-                    </li>
+  <!-- ======================================================================
+       C. MOBILE SLIDE-OUT ACCORDION DRAWER (Sailor Style Screenshot 2)
+       ====================================================================== -->
+  @if (isMobileDrawerOpen()) {
+    <div class="mobile-drawer-backdrop" (click)="closeDrawer()"></div>
+    <div class="mobile-drawer-panel">
+      <!-- Drawer Header -->
+      <div class="drawer-header">
+        <div class="drawer-brand">
+          <img src="/icons/logo.jpeg" alt="Rangnodi" class="drawer-emblem" />
+          <span class="drawer-title">MENU</span>
+        </div>
+        <button type="button" class="btn-drawer-close" (click)="closeDrawer()" aria-label="Close menu">&times;</button>
+      </div>
+
+      <!-- Drawer Category Accordion List (Matches Sailor Screenshot 2) -->
+      <div class="drawer-body">
+        <div class="drawer-nav-list">
+          @for (cat of categories(); track cat.category_id) {
+            <div class="drawer-nav-item">
+              <div class="drawer-row" (click)="toggleDrawerCat(cat.category_id)">
+                <a
+                  [routerLink]="['/catalog']"
+                  [queryParams]="{ category: cat.category_id }"
+                  (click)="closeDrawer()"
+                  class="drawer-link-text"
+                >
+                  <span>{{ cat.name }}</span>
+                  @if (cat.badge) {
+                    <span class="drawer-badge" [class.badge-hot]="cat.badge === 'HOT'" [class.badge-new]="cat.badge === 'NEW'">
+                      {{ cat.badge }}
+                    </span>
                   }
-                </ul>
+                </a>
+
+                @if (cat.subcategories && cat.subcategories.length > 0) {
+                  <button
+                    type="button"
+                    class="btn-expand-sign"
+                    (click)="toggleDrawerCat(cat.category_id); $event.stopPropagation()"
+                  >
+                    {{ expandedDrawerCat() === cat.category_id ? '−' : '+' }}
+                  </button>
+                }
               </div>
-            }
-          </div>
-        } @else {
-          <div class="mega-menu-empty">
-            <span>Explore all {{ activeCategory()?.name }} collection items in store catalog.</span>
-          </div>
-        }
+
+              <!-- Accordion Expanded Groups & Subcategories -->
+              @if (expandedDrawerCat() === cat.category_id && cat.subcategories && cat.subcategories.length > 0) {
+                <div class="drawer-sub-menu">
+                  @let groups = getGroupedSubcategories(cat);
+                  @for (grp of groups; track grp.groupName) {
+                    <div class="drawer-group-section">
+                      @if (grp.groupName && grp.groupName !== 'General') {
+                        <div class="drawer-group-header">
+                          <span class="drawer-group-title">{{ grp.groupName }}</span>
+                        </div>
+                      }
+                      <div class="drawer-sub-list">
+                        @for (sub of grp.items; track sub.subcategory_id) {
+                          <a
+                            [routerLink]="['/catalog']"
+                            [queryParams]="{ category: cat.category_id, subcategory: sub.subcategory_id }"
+                            (click)="closeDrawer()"
+                            class="drawer-sub-link"
+                          >
+                            {{ sub.name }}
+                          </a>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
     </div>
   }
+
+  <!-- ======================================================================
+       D. MOBILE BOTTOM NAVIGATION TAB BAR (Sailor Style Screenshot 1)
+       ====================================================================== -->
+  <nav class="mobile-bottom-tab-bar" aria-label="Mobile Navigation">
+    <!-- Home Tab -->
+    <a routerLink="/" class="bottom-tab-btn" routerLinkActive="tab-active" [routerLinkActiveOptions]="{ exact: true }">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span class="tab-caption">Home</span>
+    </a>
+
+    <!-- Wishlist Tab -->
+    <a routerLink="/catalog" class="bottom-tab-btn" routerLinkActive="tab-active">
+      <div class="tab-icon-relative">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="tab-counter-badge">0</span>
+      </div>
+      <span class="tab-caption">Wishlist</span>
+    </a>
+
+    <!-- Cart Tab -->
+    <a routerLink="/catalog" class="bottom-tab-btn">
+      <div class="tab-icon-relative">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span class="tab-counter-badge">0</span>
+      </div>
+      <span class="tab-caption">Cart</span>
+    </a>
+
+    <!-- Account / Login Tab -->
+    <a routerLink="/login" class="bottom-tab-btn" routerLinkActive="tab-active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="tab-caption">{{ authService.isLoggedIn() ? 'Account' : 'Login' }}</span>
+    </a>
+  </nav>
+
 </header>

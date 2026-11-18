@@ -7,6 +7,7 @@ import { AddAdminComponent } from './admin/add-admin/add-admin.component';
 import { EditAdminComponent } from './admin/edit-admin/edit-admin.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { FeaturedProductsComponent } from './features/featured-products/featured-products.component';
+import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,14 @@ export const routes: Routes = [
     path: 'auth',
     redirectTo: 'login',
     pathMatch: 'full',
+  },
+  {
+    path: 'product/:id',
+    component: ProductDetailsComponent,
+  },
+  {
+    path: 'products/detail/:id',
+    component: ProductDetailsComponent,
   },
   {
     path: 'products/add',

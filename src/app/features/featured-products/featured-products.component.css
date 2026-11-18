@@ -15,9 +15,11 @@
 }
 
 .featured-container {
-  max-width: 1440px;
+  max-width: 1920px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 clamp(16px, 2.5vw, 48px);
+  box-sizing: border-box;
 }
 
 /* Header */
@@ -26,7 +28,7 @@
 }
 
 .featured-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.4rem, 1.8vw, 1.75rem);
   font-weight: 800;
   color: #1e3a8a;
   margin: 0 0 6px 0;
@@ -44,12 +46,19 @@
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
+  gap: 24px;
+}
+
+@media (min-width: 1600px) {
+  .products-grid {
+    gap: 28px;
+  }
 }
 
 @media (max-width: 1200px) {
   .products-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
 
@@ -62,7 +71,8 @@
 
 @media (max-width: 520px) {
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 

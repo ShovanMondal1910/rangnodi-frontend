@@ -6,7 +6,8 @@
   display: block;
   width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  position: relative;
+  position: sticky;
+  top: -108px;
   z-index: 1000;
   background-color: #ffffff;
 }
@@ -17,10 +18,25 @@
   position: relative;
 }
 
+/* Desktop wrap visibility */
+.desktop-nav-wrap {
+  display: block;
+}
+
+.mobile-header-bar,
+.mobile-search-tray,
+.mobile-drawer-backdrop,
+.mobile-drawer-panel,
+.mobile-bottom-tab-bar {
+  display: none;
+}
+
 .nav-container {
-  max-width: 1440px;
+  max-width: 1840px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 clamp(16px, 2.5vw, 48px);
+  box-sizing: border-box;
 }
 
 /* ----------------------------------------------------
@@ -113,16 +129,17 @@
 
 .brand-name {
   font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  font-size: 1.625rem;
+  font-size: clamp(1.2rem, 1.5vw, 1.625rem);
   font-weight: 800;
   color: #0f172a;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 /* Search Pill Box */
 .search-pill-box {
   flex: 1;
-  max-width: 540px;
+  max-width: 680px;
 }
 
 .search-form {
@@ -296,6 +313,14 @@
   border-top: 1px solid #f1f5f9;
   border-bottom: 1px solid #f1f5f9;
   background: #ffffff;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.category-nav-bar.is-sticky {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .category-nav-container {
@@ -309,26 +334,29 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 28px;
-  flex-wrap: wrap;
+  gap: clamp(10px, 2vw, 36px);
+  flex-wrap: nowrap;
+  justify-content: center;
 }
 
 .category-menu-item {
   position: relative;
   padding: 12px 2px 14px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .category-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: clamp(3px, 0.4vw, 6px);
   text-decoration: none;
   color: #1e293b;
-  font-size: 0.8125rem;
+  font-size: clamp(0.6875rem, 0.85vw, 0.8125rem);
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
+  white-space: nowrap;
   transition: color 0.15s ease;
 }
 
@@ -339,12 +367,12 @@
 
 /* Category Badges (HOT, NEW) */
 .nav-badge {
-  font-size: 0.6rem;
+  font-size: clamp(0.5rem, 0.6vw, 0.6rem);
   font-weight: 800;
   color: #ffffff;
-  padding: 2px 5px;
+  padding: 1px 4px;
   border-radius: 4px;
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 0.04em;
 }
 
@@ -392,6 +420,7 @@
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -456,47 +485,463 @@
 }
 
 /* ----------------------------------------------------
-   5. RESPONSIVE MEDIA QUERIES
+   5. RESPONSIVE MEDIA QUERIES (Fluid Scaling & Mobile)
    ---------------------------------------------------- */
-@media (max-width: 992px) {
+@media (max-width: 1400px) {
+  .category-menu-list {
+    gap: 22px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .category-menu-list {
+    gap: 16px;
+  }
+
+  .category-nav-link {
+    font-size: 0.74rem;
+  }
+
+  .nav-right-actions {
+    gap: 14px;
+  }
+
+  .call-us-pill {
+    padding-right: 8px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 1024px) {
   .top-utility-bar {
     display: none;
   }
 
+  .category-menu-list {
+    gap: 12px;
+  }
+
+  .category-nav-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.01em;
+  }
+
+  .search-pill-box {
+    max-width: 420px;
+  }
+
+  .call-number {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 880px) {
   .call-us-pill {
     display: none;
   }
 
-  .search-pill-box {
-    max-width: 320px;
+  .category-menu-list {
+    gap: 8px;
   }
 
-  .category-menu-list {
-    gap: 16px;
-    justify-content: center;
+  .category-nav-link {
+    font-size: 0.65rem;
+    letter-spacing: 0;
   }
 }
 
-@media (max-width: 640px) {
-  .nav-container {
+@media (max-width: 768px) {
+  :host {
+    top: 0 !important;
+  }
+
+  /* Hide Desktop Navbar */
+  .desktop-nav-wrap {
+    display: none !important;
+  }
+
+  /* Show Mobile Header Bar (Sailor Screenshot 1) */
+  .mobile-header-bar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    height: 54px;
     padding: 0 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    position: relative;
+    z-index: 1000;
   }
 
-  .main-nav-content {
-    flex-wrap: wrap;
+  .btn-mobile-nav {
+    background: transparent;
+    border: none;
+    color: #0f172a;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background 0.15s ease;
   }
 
-  .search-pill-box {
-    order: 3;
-    max-width: 100%;
+  .btn-mobile-nav:active {
+    background: #f1f5f9;
+  }
+
+  .mobile-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .mobile-logo-emblem {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e2e8f0;
+  }
+
+  .mobile-brand-title {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+  }
+
+  /* Mobile Search Tray */
+  .mobile-search-tray {
+    display: block !important;
+    padding: 10px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    animation: traySlideDown 0.18s ease-out;
+  }
+
+  @keyframes traySlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mobile-search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
     width: 100%;
-    margin-top: 8px;
   }
 
-  .category-menu-list {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    padding-bottom: 8px;
+  .mobile-search-input {
+    width: 100%;
+    height: 38px;
+    border-radius: 9999px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    padding: 0 42px 0 16px;
+    font-size: 0.85rem;
+    color: #0f172a;
+    outline: none;
+  }
+
+  .mobile-search-input:focus {
+    border-color: #0f172a;
+    background: #ffffff;
+  }
+
+  .btn-mobile-search-go {
+    position: absolute;
+    right: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* Mobile Slide-Out Drawer (Sailor Screenshot 2) */
+  .mobile-drawer-backdrop {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    animation: backdropFade 0.2s ease-out;
+  }
+
+  @keyframes backdropFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .mobile-drawer-panel {
+    display: flex !important;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 82%;
+    max-width: 320px;
+    background: #ffffff;
+    z-index: 9999;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.15);
+    animation: drawerSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+  }
+
+  @keyframes drawerSlide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 2px solid #0f172a;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .drawer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .drawer-emblem {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+
+  .drawer-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #0f172a;
+  }
+
+  .btn-drawer-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .btn-drawer-close:hover {
+    color: #0f172a;
+  }
+
+  .drawer-body {
+    flex: 1;
+    padding-bottom: 40px;
+  }
+
+  .drawer-nav-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Category row - matches Sailor Screenshot 2 */
+  .drawer-nav-item {
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .drawer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+
+  .drawer-row:active {
+    background-color: #f8fafc;
+  }
+
+  .drawer-link-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: 0.02em;
+    flex: 1;
+  }
+
+  .drawer-badge {
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 9999px;
+    color: #ffffff;
+  }
+
+  .btn-expand-sign {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #64748b;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* Groups & Subcategories in Drawer */
+  .drawer-sub-menu {
+    background-color: #f8fafc;
+    padding: 12px 20px 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .drawer-group-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .drawer-group-header {
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 2px;
+  }
+
+  .drawer-group-title {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #dc2626; /* Brand red accent for category group headings */
+  }
+
+  .drawer-sub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-left: 6px;
+  }
+
+  .drawer-sub-link {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #475569;
+    text-decoration: none;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+
+  .drawer-sub-link::before {
+    content: '•';
+    color: #94a3b8;
+    margin-right: 8px;
+    font-size: 0.85rem;
+  }
+
+  .drawer-sub-link:hover,
+  .drawer-sub-link:active {
+    color: #0f172a;
+    transform: translateX(3px);
+  }
+
+  /* Mobile Bottom Navigation Tab Bar (Sailor Screenshot 1) */
+  .mobile-bottom-tab-bar {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .bottom-tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: #64748b;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    height: 100%;
+    transition: color 0.15s ease;
+    cursor: pointer;
+  }
+
+  .bottom-tab-btn:hover,
+  .bottom-tab-btn.tab-active {
+    color: #dc2626;
+  }
+
+  .tab-icon-relative {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-counter-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    min-width: 15px;
+    height: 15px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2px;
+  }
+
+  .tab-caption {
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
   }
 }

@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ProductResponse } from '../../core/models/product.models';
+import { HeroSliderComponent } from '../hero-slider/hero-slider.component';
 
 @Component({
   selector: 'app-featured-products',
   standalone: true,
-  imports: [CommonModule, RouterLink, DecimalPipe],
+  imports: [CommonModule, RouterLink, DecimalPipe, HeroSliderComponent],
   templateUrl: './featured-products.component.html',
   styleUrls: ['./featured-products.component.css'],
 })

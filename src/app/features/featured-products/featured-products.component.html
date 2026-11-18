@@ -1,4 +1,7 @@
 <div class="featured-products-page">
+  <!-- Hero Homepage Banner Slider -->
+  <app-hero-slider></app-hero-slider>
+
   <div class="featured-container">
     
     <!-- Section Header (Matches screenshot) -->
@@ -37,7 +40,7 @@
       <!-- Product Cards Grid (Matches screenshot) -->
       <div class="products-grid">
         @for (p of featuredProducts(); track p.product_id) {
-          <div class="product-card" [routerLink]="['/products/edit', p.product_id]">
+          <div class="product-card" [routerLink]="['/product', p.product_id]">
             
             <!-- Card Top: Image Area with Badge & Wishlist -->
             <div class="card-image-wrap">
