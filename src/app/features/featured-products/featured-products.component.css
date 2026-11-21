@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Featured Products Component Styling (Matches Screenshot Precision)
    ========================================================================== */
 
@@ -7,7 +7,7 @@
   width: 100%;
   background-color: #ffffff;
   padding: 40px 0 64px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .featured-products-page {

@@ -1,0 +1,77 @@
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">Frequently Asked Questions</span>
+  </div>
+
+  <div class="page-layout">
+    <!-- Main Content Card -->
+    <main class="page-content-card">
+      <div class="page-header">
+        <span class="page-cat">
+          <img src="/icons/lightbulb-idea.png" alt="FAQ" class="eyebrow-icon-img" /> Help &amp; Answers
+        </span>
+        <h1 class="page-title">Frequently Asked Questions</h1>
+        <p class="page-subtitle">
+          Find quick answers to common questions about authentic Jamdani weaves, handcrafted accessories, payments, shipping, and returns.
+        </p>
+      </div>
+
+      <div class="page-body">
+        <!-- Search & Filter Controls -->
+        <div class="faq-controls">
+          <div class="faq-search-box">
+            <input 
+              type="text" 
+              [(ngModel)]="searchQuery" 
+              placeholder="Search questions or keywords (e.g. Jamdani, shipping, COD)..."
+              class="faq-search-input"
+            />
+          </div>
+
+          <div class="faq-cat-filter">
+            @for (cat of categories; track cat) {
+              <button 
+                type="button" 
+                class="cat-filter-btn" 
+                [class.filter-active]="selectedCategory === cat"
+                (click)="selectedCategory = cat">
+                {{ cat }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- FAQ Accordion List -->
+        <div class="faq-list">
+          @for (item of filteredFaqs; track item.id) {
+            <div class="faq-item" [class.faq-open]="item.isOpen">
+              <button type="button" class="faq-question-btn" (click)="toggleFaq(item)">
+                <span class="faq-q-text">{{ item.question }}</span>
+                <span class="faq-toggle-icon">{{ item.isOpen ? '−' : '+' }}</span>
+              </button>
+              @if (item.isOpen) {
+                <div class="faq-answer-body">
+                  <p class="faq-answer-text">{{ item.answer }}</p>
+                </div>
+              }
+            </div>
+          }
+
+          @if (filteredFaqs.length === 0) {
+            <div class="no-results">
+              <p>No questions found matching your search. Please reach out to our concierge directly.</p>
+              <a routerLink="/contact" class="contact-link-btn">Contact Us</a>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <span>Still have unanswered questions? Contact our concierge at <a href="mailto:rongnodi.shop@gmail.com">rongnodi.shop&#64;gmail.com</a>, call <a href="tel:0000000">0000000</a>, or chat on WhatsApp <a href="https://wa.me/8801758814652" target="_blank">+880 1758-814652</a>.</span>
+      </div>
+    </main>
+  </div>
+</div>

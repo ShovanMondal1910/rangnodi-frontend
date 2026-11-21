@@ -1,0 +1,129 @@
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">Feedback &amp; Complain</span>
+  </div>
+
+  <div class="page-layout">
+    <!-- Main Content Card -->
+    <main class="page-content-card">
+      <div class="page-header">
+        <span class="page-cat">
+          <img src="/icons/headset.png" alt="Feedback" class="eyebrow-icon-img" /> Your Voice Matters
+        </span>
+        <h1 class="page-title">Feedback &amp; Complain</h1>
+        <p class="page-subtitle">
+          Help us preserve and enhance your handcrafted shopping experience. We listen attentively to every suggestion, praise, or concern.
+        </p>
+      </div>
+
+      <div class="page-body">
+        <form (ngSubmit)="submitFeedback()" class="feedback-form">
+          <!-- Category selector -->
+          <div class="form-group">
+            <label class="form-label">Feedback Category *</label>
+            <div class="category-pills">
+              <button 
+                type="button" 
+                class="cat-pill" 
+                [class.pill-active]="category === 'Product Quality'"
+                (click)="category = 'Product Quality'">
+                <img src="/icons/fabric-roll.png" alt="" class="pill-icon-img" />
+                Product &amp; Weave Quality
+              </button>
+              <button 
+                type="button" 
+                class="cat-pill" 
+                [class.pill-active]="category === 'Delivery Experience'"
+                (click)="category = 'Delivery Experience'">
+                <img src="/icons/delivery-truck.png" alt="" class="pill-icon-img" />
+                Delivery &amp; Packaging
+              </button>
+              <button 
+                type="button" 
+                class="cat-pill" 
+                [class.pill-active]="category === 'Customer Service'"
+                (click)="category = 'Customer Service'">
+                <img src="/icons/headset.png" alt="" class="pill-icon-img" />
+                Customer Service
+              </button>
+              <button 
+                type="button" 
+                class="cat-pill" 
+                [class.pill-active]="category === 'Suggestion'"
+                (click)="category = 'Suggestion'">
+                <img src="/icons/lightbulb-idea.png" alt="" class="pill-icon-img" />
+                Idea or Suggestion
+              </button>
+              <button 
+                type="button" 
+                class="cat-pill" 
+                [class.pill-active]="category === 'Complaint / Issue'"
+                (click)="category = 'Complaint / Issue'">
+                <img src="/icons/alert-triangle.png" alt="" class="pill-icon-img" />
+                Urgent Issue / Complaint
+              </button>
+            </div>
+          </div>
+
+          <!-- Rating stars -->
+          <div class="form-group rating-group">
+            <label class="form-label">Overall Experience Rating</label>
+            <div class="stars-row">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <button 
+                  type="button" 
+                  class="star-btn" 
+                  [class.star-selected]="rating >= star"
+                  (click)="setRating(star)">
+                  ★
+                </button>
+              }
+              <span class="rating-label font-mono">{{ rating }} / 5 Stars</span>
+            </div>
+          </div>
+
+          <!-- Inputs -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="fullName" class="form-label">Full Name *</label>
+              <input type="text" id="fullName" [(ngModel)]="fullName" name="fullName" placeholder="Your name" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label for="orderId" class="form-label">Order ID (If applicable)</label>
+              <input type="text" id="orderId" [(ngModel)]="orderId" name="orderId" placeholder="e.g. RNG-10492" class="form-input font-mono" />
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="text" id="phone" [(ngModel)]="phone" name="phone" placeholder="01XXXXXXXXX" class="form-input font-mono" />
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="you@domain.com" class="form-input" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comment" class="form-label">Your Feedback / Issue Details *</label>
+            <textarea id="comment" [(ngModel)]="comment" name="comment" rows="5" placeholder="Please elaborate so our team can investigate or improve..." class="form-input form-textarea" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Submit Feedback
+          </button>
+        </form>
+      </div>
+
+      <div class="page-footer">
+        <span>If you need immediate assistance regarding an in-transit parcel or refund, please reach out to our concierge via WhatsApp at <a href="https://wa.me/8801758814652" target="_blank">+880 1758-814652</a> or email <a href="mailto:rongnodi.shop@gmail.com">rongnodi.shop&#64;gmail.com</a>.</span>
+      </div>
+    </main>
+  </div>
+</div>

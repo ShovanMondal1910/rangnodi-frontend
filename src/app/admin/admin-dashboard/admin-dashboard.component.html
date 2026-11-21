@@ -14,12 +14,7 @@
 
       <!-- Live Date Pill -->
       <div class="hero-date-pill">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
+        <img src="/icons/clock.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Date" />
         <span>{{ currentDate | date:'fullDate' }}</span>
       </div>
     </section>
@@ -32,13 +27,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">TOTAL PRODUCTS</span>
           <div class="kpi-icon-box bg-red-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
-              <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-              </path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
+            <img src="/icons/product.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Products" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().totalProducts }}</div>
@@ -50,9 +39,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">CATEGORIES</span>
           <div class="kpi-icon-box bg-blue-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
+            <img src="/icons/category.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Categories" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().totalCategories }}</div>
@@ -64,10 +51,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">SUBCATEGORIES</span>
           <div class="kpi-icon-box bg-green-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-              <line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
+            <img src="/icons/subcategory.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Subcategories" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().totalSubcategories }}</div>
@@ -79,12 +63,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">USERS / CUSTOMERS</span>
           <div class="kpi-icon-box bg-yellow-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
+            <img src="/icons/user.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Users" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().totalUsers }}</div>
@@ -96,11 +75,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">STOCK ALERTS</span>
           <div class="kpi-icon-box bg-red-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-              <line x1="12" y1="9" x2="12" y2="13"></line>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
+            <img src="/icons/support-hours.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Stock Alerts" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().stockAlerts }}</div>
@@ -112,11 +87,7 @@
         <div class="kpi-card-header">
           <span class="kpi-label">MEDIA ASSETS</span>
           <div class="kpi-icon-box bg-indigo-soft">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <circle cx="8.5" cy="8.5" r="1.5"></circle>
-              <polyline points="21 15 16 10 5 21"></polyline>
-            </svg>
+            <img src="/icons/wishlists.png" style="width: 16px; height: 16px; object-fit: contain;" alt="Media Assets" />
           </div>
         </div>
         <div class="kpi-number">{{ stats().mediaAssets }}</div>
@@ -136,10 +107,7 @@
         <!-- Action 1: Add New Product -->
         <a routerLink="/products/add" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+            <img src="/icons/edit.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Add" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Add New Product</h4>
@@ -152,10 +120,7 @@
         <!-- Action 2: Update Product -->
         <a routerLink="/products/edit" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
+            <img src="/icons/edit.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Update" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Update Product</h4>
@@ -168,9 +133,7 @@
         <!-- Action 3: Categories & Subcategories -->
         <a routerLink="/catalog" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
+            <img src="/icons/category.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Categories" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Categories & Subcategories</h4>
@@ -183,10 +146,7 @@
         <!-- Action 4: Customer Management -->
         <a routerLink="/admin/customers/edit" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <img src="/icons/user.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Customers" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Customer Management</h4>
@@ -199,12 +159,7 @@
         <!-- Action: Orders & Fulfillment -->
         <a routerLink="/admin/orders" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-            </svg>
+            <img src="/icons/delivery-truck.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Orders" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Orders & Fulfillment</h4>
@@ -217,10 +172,7 @@
         <!-- Action 5: Explore Product Catalog -->
         <a routerLink="/catalog" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
+            <img src="/icons/search.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Catalog" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Explore Product Catalog</h4>
@@ -233,10 +185,7 @@
         <!-- Action 6: Visit Customer Storefront -->
         <a routerLink="/" class="action-tile-card">
           <div class="action-tile-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
+            <img src="/icons/home.png" style="width: 18px; height: 18px; object-fit: contain;" alt="Storefront" />
           </div>
           <div class="action-tile-content">
             <h4 class="action-tile-title">Visit Customer Storefront</h4>

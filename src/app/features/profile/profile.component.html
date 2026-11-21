@@ -30,10 +30,7 @@
             [class.active]="activeTab() === 'profile'"
             (click)="onTabClick('profile')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
+            <img src="/icons/user.png" class="tab-icon-img" alt="Profile" />
             <span>Profile</span>
           </button>
 
@@ -44,11 +41,7 @@
             [class.active]="activeTab() === 'orders'"
             (click)="onTabClick('orders')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
+            <img src="/icons/product.png" class="tab-icon-img" alt="Orders" />
             <span>Orders</span>
           </button>
 
@@ -58,11 +51,7 @@
             class="nav-tab-btn" 
             (click)="onTabClick('cart')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
+            <img src="/icons/shopping-cart.png" class="tab-icon-img" alt="Cart" />
             <span>Cart ({{ cartService.totalQuantity() }})</span>
           </button>
 
@@ -73,10 +62,7 @@
             [class.active]="activeTab() === 'request-stock'"
             (click)="onTabClick('request-stock')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-            </svg>
+            <img src="/icons/category.png" class="tab-icon-img" alt="Request Stock" />
             <span>Request Stock</span>
           </button>
 
@@ -87,10 +73,7 @@
             [class.active]="activeTab() === 'address-book'"
             (click)="onTabClick('address-book')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
+            <img src="/icons/pin-location.png" class="tab-icon-img" alt="Address Book" />
             <span>Address Book</span>
           </button>
 
@@ -101,10 +84,7 @@
             [class.active]="activeTab() === 'notifications'"
             (click)="onTabClick('notifications')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
+            <img src="/icons/lightbulb-idea.png" class="tab-icon-img" alt="Notifications" />
             <span>Notifications</span>
           </button>
 
@@ -115,9 +95,7 @@
             [class.active]="activeTab() === 'reviews'"
             (click)="onTabClick('reviews')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
+            <img src="/icons/star.png" class="tab-icon-img" alt="Reviews" />
             <span>Reviews</span>
           </button>
 
@@ -128,11 +106,7 @@
             [class.active]="activeTab() === 'subscribe'"
             (click)="onTabClick('subscribe')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
+            <img src="/icons/mail-envelope.png" class="tab-icon-img" alt="Subscribe" />
             <span>Subscribe</span>
           </button>
 
@@ -143,10 +117,7 @@
             [class.active]="activeTab() === 'change-password'"
             (click)="onTabClick('change-password')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+            <img src="/icons/save.png" class="tab-icon-img" alt="Change Password" />
             <span>Change Password</span>
           </button>
 
@@ -157,12 +128,7 @@
             [class.active]="activeTab() === 'account-delete'"
             (click)="onTabClick('account-delete')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="8.5" cy="7" r="4"></circle>
-              <line x1="18" y1="8" x2="23" y2="13"></line>
-              <line x1="23" y1="8" x2="18" y2="13"></line>
-            </svg>
+            <img src="/icons/delete.png" class="tab-icon-img" alt="Account Delete" />
             <span>Account Delete</span>
           </button>
 
@@ -172,10 +138,7 @@
             class="nav-tab-btn btn-logout-tab" 
             (click)="onTabClick('logout')"
           >
-            <svg class="tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-              <line x1="12" y1="2" x2="12" y2="12"></line>
-            </svg>
+            <img src="/icons/refresh.png" class="tab-icon-img" alt="Logout" />
             <span>Logout</span>
           </button>
 
@@ -338,11 +301,7 @@
               </div>
             } @else if (orders().length === 0) {
               <div class="tab-empty-box">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
+                <img src="/icons/product.png" style="width: 48px; height: 48px; object-fit: contain; opacity: 0.4;" alt="Orders" />
                 <h4>No orders placed yet</h4>
                 <p>When you complete a purchase, your tracked deliveries will show up here.</p>
                 <a routerLink="/" class="btn-shop-now">Start Shopping</a>
@@ -367,12 +326,7 @@
                           {{ order.payment_method | uppercase }} ({{ order.payment_status | uppercase }})
                         </span>
                         <a [routerLink]="['/invoice', order.order_id]" target="_blank" class="btn-invoice-link" title="View & Print Invoice">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                          </svg>
+                          <img src="/icons/category.png" style="width: 13px; height: 13px; object-fit: contain;" alt="Invoice" />
                           <span>Invoice</span>
                         </a>
                       </div>
@@ -410,10 +364,7 @@
                     <!-- Footer Details -->
                     <div class="order-card-footer">
                       <div class="order-delivery-snippet">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                          <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
+                        <img src="/icons/pin-location.png" style="width: 15px; height: 15px; object-fit: contain;" alt="Location" />
                         <span>Delivery to: <strong>{{ order.delivery_address }}</strong> (Phone: {{ order.phone }})</span>
                       </div>
                       <div class="order-total-snippet">

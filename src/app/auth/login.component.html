@@ -80,24 +80,7 @@
             [disabled]="isLoading()"
             (click)="onGoogleSignInFallback()"
           >
-            <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-              <path
-                fill="#4285F4"
-                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.12z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.13C3.26 21.36 7.33 24 12 24z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.26C.46 8.18 0 9.99 0 12s.46 3.82 1.26 5.42l4.02-3.13z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.26 6.58l4.02 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
-              />
-            </svg>
+            <img src="/icons/Google.png" style="width: 20px; height: 20px; object-fit: contain;" alt="Google" />
             <span>
               @if (activeTab() === 'login') {
                 Continue with Google
@@ -123,10 +106,7 @@
           <div class="form-group">
             <label class="form-label" for="loginEmail">Email Address</label>
             <div class="input-with-icon">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-              </svg>
+              <img src="/icons/mail-envelope.png" class="input-icon-img" alt="Email" />
               <input
                 id="loginEmail"
                 type="email"
@@ -146,10 +126,7 @@
               <a href="javascript:void(0)" class="forgot-link">Forgot password?</a>
             </div>
             <div class="input-with-icon">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
+              <img src="/icons/save.png" class="input-icon-img" alt="Password" />
               <input
                 id="loginPassword"
                 [type]="showPassword() ? 'text' : 'password'"
@@ -198,10 +175,7 @@
           <div class="form-group">
             <label class="form-label" for="signupFullname">Full Name *</label>
             <div class="input-with-icon">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
+              <img src="/icons/user.png" class="input-icon-img" alt="Name" />
               <input
                 id="signupFullname"
                 type="text"
@@ -217,10 +191,7 @@
           <div class="form-group">
             <label class="form-label" for="signupEmail">Email Address *</label>
             <div class="input-with-icon">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-              </svg>
+              <img src="/icons/mail-envelope.png" class="input-icon-img" alt="Email" />
               <input
                 id="signupEmail"
                 type="email"
@@ -236,9 +207,7 @@
           <div class="form-group">
             <label class="form-label" for="signupPhone">Phone Number (Optional)</label>
             <div class="input-with-icon">
-              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
+              <img src="/icons/phone-call.png" class="input-icon-img" alt="Phone" />
               <input
                 id="signupPhone"
                 type="tel"

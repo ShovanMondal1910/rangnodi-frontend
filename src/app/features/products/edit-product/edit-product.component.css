@@ -1,10 +1,10 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Edit Product Styling (Precision match with Search Bar & Editor)
    ========================================================================== */
 
 :host {
   display: block;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #1e293b;
   background-color: #f8fafc;
   min-height: 100vh;

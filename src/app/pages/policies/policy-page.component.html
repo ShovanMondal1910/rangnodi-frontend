@@ -1,0 +1,35 @@
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">{{ policyData.title }}</span>
+  </div>
+
+  <div class="policy-layout">
+    <!-- Main Policy Content -->
+    <main class="policy-content-card">
+      <div class="policy-header">
+        <span class="policy-cat">{{ policyData.category }}</span>
+        <h1 class="policy-title">{{ policyData.title }}</h1>
+        <p class="policy-last-updated">Last Updated: {{ policyData.lastUpdated }}</p>
+        <p class="policy-summary">{{ policyData.summary }}</p>
+      </div>
+
+      <div class="policy-body">
+        @for (sec of policyData.sections; track sec.heading) {
+          <div class="policy-section">
+            <h2 class="section-heading">{{ sec.heading }}</h2>
+            @for (p of sec.paragraphs; track p) {
+              <p class="policy-p">{{ p }}</p>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="policy-footer">
+        <p>Have questions regarding this policy? Reach out directly to <a href="mailto:rongnodi.shop@gmail.com">rongnodi.shop&#64;gmail.com</a> or our WhatsApp line <a href="https://wa.me/8801758814652" target="_blank">+880 1758-814652</a>.</p>
+      </div>
+    </main>
+  </div>
+</div>

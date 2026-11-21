@@ -1,0 +1,72 @@
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">Campaign Offers</span>
+  </div>
+
+  <div class="page-layout">
+    <main class="page-content-card">
+      <div class="page-header">
+        <span class="page-cat">Exclusive Savings</span>
+        <h1 class="page-title">Active Campaign Offers</h1>
+        <p class="page-subtitle">
+          Celebrate the art of Bangladeshi craft with special promotional vouchers, seasonal discounts, and nationwide free shipping perks.
+        </p>
+      </div>
+
+      <div class="page-body">
+        <div class="offers-grid">
+          @for (offer of offers; track offer.id) {
+            <div class="offer-card">
+              <div class="offer-badge-header">
+                <span class="offer-tag">{{ offer.tag }}</span>
+                <span class="offer-discount">{{ offer.discount }}</span>
+              </div>
+              
+              <h3 class="offer-title">{{ offer.title }}</h3>
+              <p class="offer-desc">{{ offer.description }}</p>
+              
+              <div class="offer-meta">
+                <span class="meta-item">
+                  <img src="/icons/clock.png" alt="Clock" class="meta-icon-img" />
+                  {{ offer.validUntil }}
+                </span>
+                @if (offer.minSpend) {
+                  <span class="meta-item">
+                    <img src="/icons/shopping-cart.png" alt="Cart" class="meta-icon-img" />
+                    {{ offer.minSpend }}
+                  </span>
+                }
+              </div>
+
+              <div class="coupon-action-row">
+                <div class="coupon-code-box font-mono">
+                  <span class="code-text">{{ offer.code }}</span>
+                </div>
+                <button type="button" class="copy-btn" (click)="copyCode(offer.code)">
+                  Copy Code
+                </button>
+              </div>
+
+              <a routerLink="/catalog" class="shop-now-link">
+                Shop Eligible Products &rarr;
+              </a>
+            </div>
+          }
+        </div>
+
+        <div class="terms-note">
+          <p>
+            * Note: Coupons can be applied at the checkout screen. Offers cannot be combined with clearance items unless explicitly stated.
+          </p>
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <p>Need assistance applying a promo code? Reach out directly to <a href="mailto:rongnodi.shop@gmail.com">rongnodi.shop&#64;gmail.com</a> or WhatsApp <a href="https://wa.me/8801758814652" target="_blank">+880 1758-814652</a>.</p>
+      </div>
+    </main>
+  </div>
+</div>

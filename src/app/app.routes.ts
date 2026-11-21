@@ -16,6 +16,14 @@ import { ProfileComponent } from './features/profile/profile.component';
 import { CartPageComponent } from './features/cart/cart-page.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { authGuard } from './core/guards/auth.guard';
+import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { CampaignOffersComponent } from './pages/campaign-offers/campaign-offers.component';
+import { BlogsComponent } from './pages/blogs/blogs.component';
+import { OrderTrackingComponent } from './pages/order-tracking/order-tracking.component';
+import { ContactUsComponent } from './pages/contact-us/contact-us.component';
+import { FeedbackComponent } from './pages/feedback/feedback.component';
+import { FaqComponent } from './pages/faq/faq.component';
+import { PolicyPageComponent } from './pages/policies/policy-page.component';
 
 export const routes: Routes = [
   {
@@ -149,6 +157,116 @@ export const routes: Routes = [
     path: 'products',
     redirectTo: 'products/add',
     pathMatch: 'full',
+  },
+  // Company & Information Pages
+  {
+    path: 'about-us',
+    component: AboutUsComponent,
+  },
+  {
+    path: 'about',
+    redirectTo: 'about-us',
+    pathMatch: 'full',
+  },
+  {
+    path: 'campaign-offers',
+    component: CampaignOffersComponent,
+  },
+  {
+    path: 'offers',
+    redirectTo: 'campaign-offers',
+    pathMatch: 'full',
+  },
+  {
+    path: 'blogs',
+    component: BlogsComponent,
+  },
+  {
+    path: 'blog',
+    redirectTo: 'blogs',
+    pathMatch: 'full',
+  },
+  {
+    path: 'order-tracking',
+    component: OrderTrackingComponent,
+  },
+  {
+    path: 'track-order',
+    redirectTo: 'order-tracking',
+    pathMatch: 'full',
+  },
+  {
+    path: 'contact-us',
+    component: ContactUsComponent,
+  },
+  {
+    path: 'contact',
+    redirectTo: 'contact-us',
+    pathMatch: 'full',
+  },
+  {
+    path: 'feedback-complain',
+    component: FeedbackComponent,
+  },
+  {
+    path: 'feedback',
+    redirectTo: 'feedback-complain',
+    pathMatch: 'full',
+  },
+  {
+    path: 'faq',
+    component: FaqComponent,
+  },
+  {
+    path: 'faqs',
+    redirectTo: 'faq',
+    pathMatch: 'full',
+  },
+  // Policies & Help Center Pages
+  {
+    path: 'privacy-policy',
+    component: PolicyPageComponent,
+    data: { type: 'privacy' },
+  },
+  {
+    path: 'privacy',
+    redirectTo: 'privacy-policy',
+    pathMatch: 'full',
+  },
+  {
+    path: 'terms',
+    component: PolicyPageComponent,
+    data: { type: 'terms' },
+  },
+  {
+    path: 'terms-of-service',
+    redirectTo: 'terms',
+    pathMatch: 'full',
+  },
+  {
+    path: 'warranty-policy',
+    component: PolicyPageComponent,
+    data: { type: 'warranty' },
+  },
+  {
+    path: 'return-policy',
+    component: PolicyPageComponent,
+    data: { type: 'exchange-return' },
+  },
+  {
+    path: 'exchange-return-policy',
+    redirectTo: 'return-policy',
+    pathMatch: 'full',
+  },
+  {
+    path: 'delivery-policy',
+    component: PolicyPageComponent,
+    data: { type: 'delivery' },
+  },
+  {
+    path: 'refund-policy',
+    component: PolicyPageComponent,
+    data: { type: 'refund' },
   },
   {
     path: '**',

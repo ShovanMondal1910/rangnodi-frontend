@@ -207,11 +207,15 @@
   align-items: center;
 }
 
-.input-icon {
+.input-icon,
+.input-icon-img {
   position: absolute;
   left: 12px;
   color: #94a3b8;
   pointer-events: none;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }
 
 .form-input {

@@ -1,11 +1,11 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Rangnodi Footer Component Styling (Precision match with design screenshot)
    ========================================================================== */
 
 :host {
   display: block;
   width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: #f8fafc;
   color: #1e293b;
   border-top: 1px solid #e2e8f0;
@@ -33,7 +33,7 @@
   display: grid;
   grid-template-columns: 1.35fr 1fr 1fr 1.55fr;
   gap: 36px;
-  padding: 44px 0 32px;
+  padding: 48px 0 36px;
   align-items: start;
 }
 
@@ -83,6 +83,14 @@
   line-height: 1.55;
   margin: 0 0 16px 0;
   max-width: 320px;
+}
+
+.footer-flag-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  vertical-align: -2px;
+  margin-right: 4px;
 }
 
 .contact-list {
@@ -148,6 +156,14 @@
   justify-content: center;
   text-decoration: none;
   transition: all 0.15s ease;
+  overflow: hidden;
+}
+
+.social-icon-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
 }
 
 .social-circle:hover {
@@ -195,106 +211,147 @@
   color: #dc2626;
 }
 
-/* Column 4: Physical Store Location Cards */
-.store-card {
+/* Column 4: Services & Specialties Card */
+.service-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
+  border-radius: 10px;
+  padding: 16px 18px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.store-card:last-child {
-  margin-bottom: 0;
+.service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.store-header {
+.service-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.store-name {
-  font-size: 0.825rem;
+.service-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.service-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+}
+
+.service-tag {
+  font-size: 0.875rem;
   font-weight: 700;
   color: #0f172a;
-  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-.store-badge {
-  font-size: 0.65rem;
+.service-heading {
+  font-size: 0.8125rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 4px;
-}
-
-.badge-off {
-  background-color: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fee2e2;
-}
-
-.store-address {
-  font-size: 0.735rem;
-  color: #64748b;
-  margin: 0 0 4px 0;
-  line-height: 1.35;
-}
-
-.store-address.sub-loc {
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px dashed #f1f5f9;
-}
-
-.store-hotline {
-  font-size: 0.75rem;
   color: #1e293b;
-  margin: 0;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
 }
 
-.store-hotline strong {
-  color: #0f172a;
+.service-desc {
+  font-size: 0.775rem;
+  line-height: 1.55;
+  color: #64748b;
+  margin: 0;
 }
 
 /* ----------------------------------------------------
-   2. BOTTOM COPYRIGHT & GIANT WATERMARK
+   2. BOTTOM BRAND DISPLAY & COPYRIGHT
    ---------------------------------------------------- */
 .footer-bottom-section {
-  position: relative;
-  padding: 20px 0 36px;
+  margin-top: 52px;
+  padding: 48px 0 32px;
+  border-top: 1px solid #e2e8f0;
+  overflow: hidden;
   text-align: center;
-}
-
-.copyright-text {
-  font-size: 0.75rem;
-  color: #64748b;
-  margin: 0;
   position: relative;
-  z-index: 2;
+  width: 100%;
+  clear: both;
 }
 
-/* Giant Subtle Watermark */
+/* Stylish Luxury Brand Display */
 .footer-watermark {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 6.5rem;
-  font-weight: 900;
-  color: rgba(15, 23, 42, 0.03);
-  letter-spacing: 0.16em;
+  display: block;
+  font-family: 'Cinzel', 'Playfair Display', 'Bodoni MT', 'Didot', 'Georgia', serif;
+  font-size: 5.6rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.08);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.015) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
   user-select: none;
   pointer-events: none;
   white-space: nowrap;
-  z-index: 1;
+  margin: 0 auto 36px auto;
+  line-height: 1.2;
+  position: static;
 }
 
-@media (max-width: 768px) {
+.copyright-bar {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 24px;
+  margin-top: 16px;
+  position: relative;
+  display: block;
+  width: 100%;
+  clear: both;
+}
+
+.copyright-text {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0;
+  letter-spacing: 0.03em;
+  display: block;
+}
+
+@media (max-width: 992px) {
+  .footer-bottom-section {
+    margin-top: 36px;
+    padding: 36px 0 28px;
+  }
   .footer-watermark {
-    font-size: 3.5rem;
-    bottom: -10px;
+    font-size: 3.8rem;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    margin-bottom: 24px;
+    -webkit-text-stroke: 1.2px rgba(15, 23, 42, 0.07);
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-bottom-section {
+    margin-top: 28px;
+    padding: 28px 0 20px;
+  }
+  .footer-watermark {
+    font-size: 2.2rem;
+    letter-spacing: 0.16em;
+    text-indent: 0.16em;
+    margin-bottom: 18px;
+    -webkit-text-stroke: 1px rgba(15, 23, 42, 0.06);
   }
 }

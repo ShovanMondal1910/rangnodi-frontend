@@ -1,11 +1,11 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Admin Top Navbar Component Styling
    ========================================================================== */
 
 :host {
   display: block;
   width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .admin-top-navbar {

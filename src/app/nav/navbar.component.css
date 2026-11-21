@@ -1,11 +1,11 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Rangnodi Store Navbar & Mega Menu Styling
    ========================================================================== */
 
 :host {
   display: block;
   width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   position: sticky;
   top: -108px;
   z-index: 1000;
@@ -1017,4 +1017,65 @@
   justify-content: center;
   padding: 0 3px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* PNG Icon replacements for Navbar */
+.nav-chevron-icon-img {
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
+  opacity: 0.65;
+}
+
+.nav-search-btn-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.nav-phone-btn-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.nav-action-btn-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
+
+.cat-chevron-img {
+  width: 9px;
+  height: 9px;
+  object-fit: contain;
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.cat-chevron-img.chevron-open {
+  transform: rotate(180deg);
+}
+
+.mobile-nav-btn-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.mobile-search-btn-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: block;
+}
+
+.bottom-tab-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
 }

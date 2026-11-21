@@ -1,10 +1,10 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    Order Management & Fulfillment Styles (Admin Dashboard)
    ========================================================================== */
 
 :host {
   display: block;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #1e293b;
 }
 

@@ -1,0 +1,113 @@
+<div class="page-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Home</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-current">Order Tracking</span>
+  </div>
+
+  <div class="page-layout">
+    <!-- Main Content Card -->
+    <main class="page-content-card">
+      <div class="page-header">
+        <span class="page-cat">
+          <img src="/icons/delivery-truck.png" alt="Truck" class="eyebrow-icon-img" /> Real-Time Shipment Status
+        </span>
+        <h1 class="page-title">Track Your Order</h1>
+        <p class="page-subtitle">
+          Check the progress of your handcrafted order from our workshop to your doorstep across Bangladesh.
+        </p>
+      </div>
+
+      <div class="page-body">
+        <!-- Search Card -->
+        <div class="tracking-search-card">
+          <form (ngSubmit)="trackOrder()" class="tracking-form">
+            <div class="input-row">
+              <div class="form-group">
+                <label for="orderId" class="form-label">Order ID / Invoice #</label>
+                <input 
+                  type="text" 
+                  id="orderId" 
+                  [(ngModel)]="orderIdInput" 
+                  name="orderIdInput" 
+                  placeholder="e.g. RNG-10492 or 10492"
+                  class="form-input" 
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="phone" class="form-label">Phone Number (Optional)</label>
+                <input 
+                  type="text" 
+                  id="phone" 
+                  [(ngModel)]="phoneInput" 
+                  name="phoneInput" 
+                  placeholder="e.g. 017XXXXXXXX"
+                  class="form-input font-mono" 
+                />
+              </div>
+
+              <button type="submit" class="track-btn">
+                Track Shipment
+              </button>
+            </div>
+
+            @if (errorMessage) {
+              <p class="error-text">{{ errorMessage }}</p>
+            }
+          </form>
+        </div>
+
+        <!-- Result Display -->
+        @if (searched && trackingResult) {
+          <div class="tracking-result-box">
+            <div class="result-header">
+              <div>
+                <span class="order-id-tag font-mono">{{ trackingResult.orderId }}</span>
+                <h3 class="result-title">Status: <span class="status-active">{{ trackingResult.status }}</span></h3>
+              </div>
+              <div class="result-meta-right">
+                <span class="meta-label">Est. Delivery:</span>
+                <strong class="meta-value">{{ trackingResult.estimatedDelivery }}</strong>
+              </div>
+            </div>
+
+            <!-- Timeline Progress -->
+            <div class="timeline-container">
+              @for (step of trackingResult.steps; track step.label; let idx = $index) {
+                <div class="timeline-node" [class.node-done]="step.done" [class.node-active]="step.active">
+                  <div class="node-indicator">
+                    @if (step.done) {
+                      <span>✓</span>
+                    } @else {
+                      <span>{{ idx + 1 }}</span>
+                    }
+                  </div>
+                  <div class="node-content">
+                    <h4 class="node-title">{{ step.label }}</h4>
+                    <span class="node-date">{{ step.date }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Support help -->
+            <div class="support-callout">
+              <span>Need urgent help with this order?</span>
+              <div class="callout-actions">
+                <a href="tel:0000000" class="btn-hotline">Call 0000000</a>
+                <a href="https://wa.me/8801758814652" target="_blank" class="btn-whatsapp">WhatsApp Support</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="page-footer">
+        <span>Can't find your invoice number or facing delivery delays? Reach out directly at <a href="mailto:rongnodi.shop@gmail.com">rongnodi.shop&#64;gmail.com</a> or WhatsApp <a href="https://wa.me/8801758814652" target="_blank">+880 1758-814652</a>.</span>
+      </div>
+    </main>
+  </div>
+</div>

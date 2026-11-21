@@ -18,14 +18,14 @@ export class AdminDashboardComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  // Dynamic Dashboard Statistics
+  // Dynamic Dashboard Statistics - reads directly from live PostgreSQL database
   stats = signal<DashboardStats>({
-    totalProducts: 4,
-    totalCategories: 9,
-    totalSubcategories: 80,
-    totalUsers: 4,
+    totalProducts: 0,
+    totalCategories: 0,
+    totalSubcategories: 0,
+    totalUsers: 0,
     stockAlerts: 0,
-    mediaAssets: 26,
+    mediaAssets: 0,
   });
 
   isLoading = signal<boolean>(true);
@@ -63,19 +63,19 @@ export class AdminDashboardComponent implements OnInit {
       next: (res) => {
         if (res.success && res.data) {
           this.stats.set({
-            totalProducts: res.data.totalProducts || 4,
-            totalCategories: res.data.totalCategories || 9,
-            totalSubcategories: res.data.totalSubcategories || 80,
-            totalUsers: res.data.totalUsers || 4,
-            stockAlerts: res.data.stockAlerts || 0,
-            mediaAssets: res.data.mediaAssets || 26,
+            totalProducts: Number(res.data.totalProducts ?? 0),
+            totalCategories: Number(res.data.totalCategories ?? 0),
+            totalSubcategories: Number(res.data.totalSubcategories ?? 0),
+            totalUsers: Number(res.data.totalUsers ?? 0),
+            stockAlerts: Number(res.data.stockAlerts ?? 0),
+            mediaAssets: Number(res.data.mediaAssets ?? 0),
           });
         }
         this.isLoading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Failed to load real dashboard stats from DB:', err);
         this.isLoading.set(false);
-        // Retain baseline default metrics from design
       }
     });
   }
