@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -68,7 +68,7 @@ export class CatalogManagementComponent implements OnInit {
   subcategoryForm = {
     subcategory_id: '',
     category_id: '',
-    group_name: 'Main Collection',
+    group_name: '',
     name: '',
     slug: '',
     sort_order: 10,
@@ -80,6 +80,130 @@ export class CatalogManagementComponent implements OnInit {
   readonly allCount = computed(() => this.summary().totalCategories);
   readonly activeCount = computed(() => this.summary().activeCategories);
   readonly inactiveCount = computed(() => this.summary().inactiveCategories);
+
+  // Selected Parent Category Signal for real-time reactivity
+  readonly selectedParentCategoryId = signal<string>('');
+
+  // Dynamic list of previous Group Names filtered by the selected Parent Department Category
+  readonly availableGroups = computed(() => {
+    const parentId = this.selectedParentCategoryId();
+    const categories = this.categories();
+    const set = new Set<string>();
+
+    if (parentId) {
+      const selectedCat = categories.find((c) => c.category_id === parentId);
+      if (selectedCat?.subcategories) {
+        for (const sub of selectedCat.subcategories) {
+          if (sub.group_name && sub.group_name.trim()) {
+            set.add(sub.group_name.trim());
+          }
+        }
+      }
+    } else {
+      for (const cat of categories) {
+        if (cat.subcategories) {
+          for (const sub of cat.subcategories) {
+            if (sub.group_name && sub.group_name.trim()) {
+              set.add(sub.group_name.trim());
+            }
+          }
+        }
+      }
+    }
+    return Array.from(set).sort();
+  });
+
+  // Dynamic list of previous Subcategory Names filtered by the selected Parent Department Category
+  readonly availableSubcategoryNames = computed(() => {
+    const parentId = this.selectedParentCategoryId();
+    const categories = this.categories();
+    const set = new Set<string>();
+
+    if (parentId) {
+      const selectedCat = categories.find((c) => c.category_id === parentId);
+      if (selectedCat?.subcategories) {
+        for (const sub of selectedCat.subcategories) {
+          if (sub.name && sub.name.trim()) {
+            set.add(sub.name.trim());
+          }
+        }
+      }
+    } else {
+      for (const cat of categories) {
+        if (cat.subcategories) {
+          for (const sub of cat.subcategories) {
+            if (sub.name && sub.name.trim()) {
+              set.add(sub.name.trim());
+            }
+          }
+        }
+      }
+    }
+    return Array.from(set).sort();
+  });
+
+  // Name of selected parent category for dropdown header display
+  readonly selectedParentCategoryName = computed(() => {
+    const parentId = this.selectedParentCategoryId();
+    if (!parentId) return '';
+    const cat = this.categories().find((c) => c.category_id === parentId);
+    return cat ? cat.name : '';
+  });
+
+  onParentCategoryChange(catId: string): void {
+    this.subcategoryForm.category_id = catId;
+    this.selectedParentCategoryId.set(catId);
+  }
+
+  // Unified Combobox Dropdown States (Dropdown and Text Box in One)
+  readonly isGroupDropdownOpen = signal<boolean>(false);
+  readonly isSubNameDropdownOpen = signal<boolean>(false);
+
+  toggleGroupDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isGroupDropdownOpen.update((v) => !v);
+    this.isSubNameDropdownOpen.set(false);
+  }
+
+  selectGroup(grp: string): void {
+    this.subcategoryForm.group_name = grp;
+    this.isGroupDropdownOpen.set(false);
+  }
+
+  toggleSubNameDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isSubNameDropdownOpen.update((v) => !v);
+    this.isGroupDropdownOpen.set(false);
+  }
+
+  selectSubName(name: string): void {
+    this.subcategoryForm.name = name;
+    this.onSubcategoryNameChange();
+    this.isSubNameDropdownOpen.set(false);
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.isGroupDropdownOpen.set(false);
+    this.isSubNameDropdownOpen.set(false);
+  }
+
+  onGroupSelect(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    if (target && target.value) {
+      this.subcategoryForm.group_name = target.value;
+      target.value = '';
+    }
+  }
+
+  onSubcategoryNameSelect(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    if (target && target.value) {
+      this.subcategoryForm.name = target.value;
+      this.onSubcategoryNameChange();
+      target.value = '';
+    }
+  }
 
   onTabChange(tab: ActiveTab): void {
     this.activeTab.set(tab);
@@ -334,12 +458,14 @@ export class CatalogManagementComponent implements OnInit {
       this.subcategoryForm.category_id ||
       (this.categories()[0]?.category_id ?? '');
 
+    this.selectedParentCategoryId.set(defaultCatId);
+
     this.catalogService.generateSubcategoryId().subscribe({
       next: (id) => {
         this.subcategoryForm = {
           subcategory_id: id,
           category_id: defaultCatId,
-          group_name: 'Main Collection',
+          group_name: '',
           name: '',
           slug: '',
           sort_order: 10,
@@ -440,6 +566,7 @@ export class CatalogManagementComponent implements OnInit {
     event.stopPropagation();
     this.activeTab.set('subcategory');
     this.editingSubcategoryId.set(sub.subcategory_id);
+    this.selectedParentCategoryId.set(sub.category_id);
     this.isSubSlugManuallyEdited = true;
     this.subcategoryForm = {
       subcategory_id: sub.subcategory_id,

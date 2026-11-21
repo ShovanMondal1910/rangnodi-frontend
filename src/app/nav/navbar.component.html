@@ -52,7 +52,7 @@
               <button type="button" class="category-picker-btn"
                 (click)="showCategoryPicker = !showCategoryPicker; $event.stopPropagation()">
                 <span>{{ selectedSearchCategory }}</span>
-                <img src="/icons/collapse.png" class="nav-chevron-icon-img" alt="Chevron" />
+                <span class="picker-caret">▾</span>
               </button>
 
               @if (showCategoryPicker) {
@@ -129,14 +129,6 @@
                 <span class="nav-badge" [class.badge-hot]="cat.badge === 'HOT'" [class.badge-new]="cat.badge === 'NEW'">
                   {{ cat.badge }}
                 </span>
-              }
-              @if (cat.subcategories && cat.subcategories.length > 0) {
-                <img
-                  src="/icons/collapse.png"
-                  class="cat-chevron-img"
-                  [class.chevron-open]="activeCategory()?.category_id === cat.category_id && isMegaMenuOpen()"
-                  alt="Expand"
-                />
               }
             </button>
 

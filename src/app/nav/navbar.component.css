@@ -1047,6 +1047,12 @@
   display: block;
 }
 
+.picker-caret {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-left: 4px;
+}
+
 .cat-chevron-img {
   width: 9px;
   height: 9px;

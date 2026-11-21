@@ -63,21 +63,13 @@
     <div class="panel form-panel">
       <!-- Tabs -->
       <div class="tab-header">
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'category'"
-          (click)="activeTab.set('category')"
-        >
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'category'"
+          (click)="activeTab.set('category')">
           <img src="/icons/category.png" alt="" class="tab-icon-img" (error)="onImgError($event)" />
           {{ editingCategoryId() ? 'Edit Category' : 'Add Category' }}
         </button>
-        <button
-          type="button"
-          class="tab-btn"
-          [class.active]="activeTab() === 'subcategory'"
-          (click)="onTabChange('subcategory')"
-        >
+        <button type="button" class="tab-btn" [class.active]="activeTab() === 'subcategory'"
+          (click)="onTabChange('subcategory')">
           <img src="/icons/subcategory.png" alt="" class="tab-icon-img" (error)="onImgError($event)" />
           {{ editingSubcategoryId() ? 'Edit Subcategory' : 'Add Subcategory' }}
         </button>
@@ -85,292 +77,309 @@
 
       <!-- CATEGORY FORM -->
       @if (activeTab() === 'category') {
-        <div class="form-body">
-          <div class="form-title-row">
-            <h2 class="form-title">
-              <img src="/icons/category.png" alt="" class="title-icon-img" (error)="onImgError($event)" />
-              {{ editingCategoryId() ? 'Edit Category Details' : 'New Category Details' }}
-            </h2>
-            <span class="badge-tag">PARENT DEPARTMENT</span>
-          </div>
+      <div class="form-body">
+        <div class="form-title-row">
+          <h2 class="form-title">
+            <img src="/icons/category.png" alt="" class="title-icon-img" (error)="onImgError($event)" />
+            {{ editingCategoryId() ? 'Edit Category Details' : 'New Category Details' }}
+          </h2>
+          <span class="badge-tag">PARENT DEPARTMENT</span>
+        </div>
 
-          <!-- Storefront Nav Bar Live Preview -->
-          <div class="preview-box">
-            <span class="preview-title">STOREFRONT NAV BAR PREVIEW</span>
-            <div class="preview-display">
-              <div class="nav-preview-item" [class.highlighted]="categoryForm.is_highlighted">
-                <span class="nav-text">{{ previewName }}</span>
-                @if (categoryForm.badge.trim()) {
-                  <span class="preview-badge">{{ categoryForm.badge.trim() }}</span>
-                }
-              </div>
+        <!-- Storefront Nav Bar Live Preview -->
+        <div class="preview-box">
+          <span class="preview-title">STOREFRONT NAV BAR PREVIEW</span>
+          <div class="preview-display">
+            <div class="nav-preview-item" [class.highlighted]="categoryForm.is_highlighted">
+              <span class="nav-text">{{ previewName }}</span>
+              @if (categoryForm.badge.trim()) {
+              <span class="preview-badge">{{ categoryForm.badge.trim() }}</span>
+              }
             </div>
-          </div>
-
-          <!-- Category ID Field with Copy & Re-gen -->
-          <div class="form-group">
-            <label class="form-label">Category ID (10–Digit Unique) <span class="required">*</span></label>
-            <div class="id-input-group">
-              <input
-                type="text"
-                class="form-control font-mono"
-                [(ngModel)]="categoryForm.category_id"
-                maxlength="10"
-                placeholder="10-digit ID"
-              />
-              <button
-                type="button"
-                class="btn-action"
-                title="Copy ID"
-                (click)="copyToClipboard(categoryForm.category_id, 'Category ID')"
-              >
-                <img src="/icons/copy.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
-                Copy
-              </button>
-              <button
-                type="button"
-                class="btn-action"
-                title="Regenerate ID"
-                [disabled]="!!editingCategoryId()"
-                (click)="regenCategoryId()"
-              >
-                <img src="/icons/refresh.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
-                Re-gen
-              </button>
-            </div>
-            <p class="helper-text">Cryptographically secure 10-digit primary key for relational queries.</p>
-          </div>
-
-          <!-- Category Name -->
-          <div class="form-group">
-            <label class="form-label">Category Name <span class="required">*</span></label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. MEN, WOMEN, SALE/26, WINTER WEAR"
-              [(ngModel)]="categoryForm.name"
-              (input)="onCategoryNameChange()"
-            />
-          </div>
-
-          <!-- 2 Columns: URL Slug & Badge Label -->
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">URL Slug</label>
-              <input
-                type="text"
-                class="form-control font-mono"
-                placeholder="e.g. men, sale-26"
-                [(ngModel)]="categoryForm.slug"
-                (input)="onCategorySlugChange()"
-              />
-              <p class="helper-text">Auto-generated for SEO store links</p>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Badge Label (Optional)</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="e.g. HOT, NEW, SALE, 50%"
-                [(ngModel)]="categoryForm.badge"
-              />
-              <p class="helper-text">Pill tag shown beside category title</p>
-            </div>
-          </div>
-
-          <!-- 2 Columns: Sort Order & Status -->
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">Sort Order (Navbar Position)</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="categoryForm.sort_order"
-                min="0"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Publish Status</label>
-              <select class="form-control" [(ngModel)]="categoryForm.status">
-                <option value="active">Active (Visible in Nav)</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Highlight Checkbox -->
-          <div class="checkbox-group">
-            <input
-              type="checkbox"
-              id="is_highlighted"
-              [(ngModel)]="categoryForm.is_highlighted"
-            />
-            <label for="is_highlighted">
-              Highlight with red accent color (recommended for SALE or festive campaigns)
-            </label>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="form-footer">
-            <button
-              type="button"
-              class="btn btn-save"
-              [disabled]="isSaving()"
-              (click)="saveCategory()"
-            >
-              <img src="/icons/save.png" alt="" class="btn-save-img" (error)="onImgError($event)" />
-              {{ isSaving() ? 'Saving...' : (editingCategoryId() ? 'Update Category' : 'Save Category') }}
-            </button>
-
-            @if (editingCategoryId()) {
-              <button
-                type="button"
-                class="btn btn-cancel"
-                (click)="initNewCategoryForm()"
-              >
-                Cancel Edit
-              </button>
-            }
           </div>
         </div>
+
+        <!-- Category ID Field with Copy & Re-gen -->
+        <div class="form-group">
+          <label class="form-label">Category ID (10–Digit Unique) <span class="required">*</span></label>
+          <div class="id-input-group">
+            <input type="text" class="form-control font-mono" [(ngModel)]="categoryForm.category_id" maxlength="10"
+              placeholder="10-digit ID" />
+            <button type="button" class="btn-action" title="Copy ID"
+              (click)="copyToClipboard(categoryForm.category_id, 'Category ID')">
+              <img src="/icons/copy.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
+              Copy
+            </button>
+            <button type="button" class="btn-action" title="Regenerate ID" [disabled]="!!editingCategoryId()"
+              (click)="regenCategoryId()">
+              <img src="/icons/refresh.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
+              Re-gen
+            </button>
+          </div>
+          <p class="helper-text">Cryptographically secure 10-digit primary key for relational queries.</p>
+        </div>
+
+        <!-- Category Name -->
+        <div class="form-group">
+          <label class="form-label">Category Name <span class="required">*</span></label>
+          <input type="text" class="form-control" placeholder="e.g. MEN, WOMEN, SALE/26, WINTER WEAR"
+            [(ngModel)]="categoryForm.name" (input)="onCategoryNameChange()" />
+        </div>
+
+        <!-- 2 Columns: URL Slug & Badge Label -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">URL Slug</label>
+            <input type="text" class="form-control font-mono" placeholder="e.g. men, sale-26"
+              [(ngModel)]="categoryForm.slug" (input)="onCategorySlugChange()" />
+            <p class="helper-text">Auto-generated for SEO store links</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Badge Label (Optional)</label>
+            <input type="text" class="form-control" placeholder="e.g. HOT, NEW, SALE, 50%"
+              [(ngModel)]="categoryForm.badge" />
+            <p class="helper-text">Pill tag shown beside category title</p>
+          </div>
+        </div>
+
+        <!-- 2 Columns: Sort Order & Status -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Sort Order (Navbar Position)</label>
+            <input type="number" class="form-control" [(ngModel)]="categoryForm.sort_order" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Publish Status</label>
+            <select class="form-control" [(ngModel)]="categoryForm.status">
+              <option value="active">Active (Visible in Nav)</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Highlight Checkbox -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="is_highlighted" [(ngModel)]="categoryForm.is_highlighted" />
+          <label for="is_highlighted">
+            Highlight with red accent color (recommended for SALE or festive campaigns)
+          </label>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-footer">
+          <button type="button" class="btn btn-save" [disabled]="isSaving()" (click)="saveCategory()">
+            <img src="/icons/save.png" alt="" class="btn-save-img" (error)="onImgError($event)" />
+            {{ isSaving() ? 'Saving...' : (editingCategoryId() ? 'Update Category' : 'Save Category') }}
+          </button>
+
+          @if (editingCategoryId()) {
+          <button type="button" class="btn btn-cancel" (click)="initNewCategoryForm()">
+            Cancel Edit
+          </button>
+          }
+        </div>
+      </div>
       }
 
       <!-- SUBCATEGORY FORM -->
       @if (activeTab() === 'subcategory') {
-        <div class="form-body">
-          <div class="form-title-row">
-            <h2 class="form-title">
-              <img src="/icons/subcategory.png" alt="" class="title-icon-img" (error)="onImgError($event)" />
-              {{ editingSubcategoryId() ? 'Edit Subcategory' : 'New Subcategory Details' }}
-            </h2>
-            <span class="badge-tag">SUBCATEGORY TIER</span>
-          </div>
+      <div class="form-body">
+        <div class="form-title-row">
+          <h2 class="form-title">
+            <img src="/icons/subcategory.png" alt="" class="title-icon-img" (error)="onImgError($event)" />
+            {{ editingSubcategoryId() ? 'Edit Subcategory' : 'New Subcategory Details' }}
+          </h2>
+          <span class="badge-tag">SUBCATEGORY TIER</span>
+        </div>
 
-          <!-- Parent Category Selector -->
-          <div class="form-group">
-            <label class="form-label">Parent Department Category <span class="required">*</span></label>
-            <select class="form-control" [(ngModel)]="subcategoryForm.category_id">
-              <option value="" disabled>-- Select Parent Category --</option>
-              @for (cat of categories(); track cat.category_id) {
-                <option [value]="cat.category_id">
-                  {{ cat.name }} (ID: {{ cat.category_id }})
-                </option>
-              }
-            </select>
-          </div>
+        <!-- Parent Category Selector -->
+        <div class="form-group">
+          <label class="form-label">Parent Department Category <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="subcategoryForm.category_id" (ngModelChange)="onParentCategoryChange($event)">
+            <option value="" disabled>-- Select Parent Category --</option>
+            @for (cat of categories(); track cat.category_id) {
+            <option [value]="cat.category_id">
+              {{ cat.name }} (ID: {{ cat.category_id }})
+            </option>
+            }
+          </select>
+        </div>
 
-          <!-- Subcategory ID Field with Copy & Re-gen -->
-          <div class="form-group">
-            <label class="form-label">Subcategory ID (10–Digit Unique) <span class="required">*</span></label>
-            <div class="id-input-group">
-              <input
-                type="text"
-                class="form-control font-mono"
-                [(ngModel)]="subcategoryForm.subcategory_id"
-                maxlength="10"
-                placeholder="10-digit ID"
-              />
-              <button
-                type="button"
-                class="btn-action"
-                title="Copy ID"
-                (click)="copyToClipboard(subcategoryForm.subcategory_id, 'Subcategory ID')"
-              >
-                <img src="/icons/copy.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
-                Copy
-              </button>
-              <button
-                type="button"
-                class="btn-action"
-                title="Regenerate ID"
-                [disabled]="!!editingSubcategoryId()"
-                (click)="regenSubcategoryId()"
-              >
-                <img src="/icons/refresh.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
-                Re-gen
-              </button>
-            </div>
+        <!-- Subcategory ID Field with Copy & Re-gen -->
+        <div class="form-group">
+          <label class="form-label">Subcategory ID (10–Digit Unique) <span class="required">*</span></label>
+          <div class="id-input-group">
+            <input type="text" class="form-control font-mono" [(ngModel)]="subcategoryForm.subcategory_id"
+              maxlength="10" placeholder="10-digit ID" />
+            <button type="button" class="btn-action" title="Copy ID"
+              (click)="copyToClipboard(subcategoryForm.subcategory_id, 'Subcategory ID')">
+              <img src="/icons/copy.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
+              Copy
+            </button>
+            <button type="button" class="btn-action" title="Regenerate ID" [disabled]="!!editingSubcategoryId()"
+              (click)="regenSubcategoryId()">
+              <img src="/icons/refresh.png" alt="" class="action-icon-img" (error)="onImgError($event)" />
+              Re-gen
+            </button>
           </div>
+        </div>
 
-          <!-- Group Name / Column Header -->
-          <div class="form-group">
-            <label class="form-label">Column / Group Header</label>
+        <!-- Group Name / Column Header (Unified Combobox: Text Box & Dropdown in One) -->
+        <div class="form-group" (click)="$event.stopPropagation()">
+          <label class="form-label">Column / Group Header</label>
+          <div class="combobox-unified">
             <input
               type="text"
-              class="form-control"
-              placeholder="e.g. Ethnic, Western, Outerwear, Bottoms"
+              class="form-control combobox-input"
+              placeholder="Type new group or select from DB..."
               [(ngModel)]="subcategoryForm.group_name"
+              (focus)="isGroupDropdownOpen.set(true)"
             />
-            <p class="helper-text">Groups items in mega menus or catalog navigations</p>
-          </div>
-
-          <!-- Subcategory Name -->
-          <div class="form-group">
-            <label class="form-label">Subcategory Name <span class="required">*</span></label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. Panjabi & Kurta, Casual Shirts, Dresses"
-              [(ngModel)]="subcategoryForm.name"
-              (input)="onSubcategoryNameChange()"
-            />
-          </div>
-
-          <!-- 2 Columns: URL Slug & Sort Order -->
-          <div class="form-row-2">
-            <div class="form-group">
-              <label class="form-label">URL Slug</label>
-              <input
-                type="text"
-                class="form-control font-mono"
-                placeholder="e.g. panjabi-kurta"
-                [(ngModel)]="subcategoryForm.slug"
-                (input)="onSubcategorySlugChange()"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Sort Order</label>
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="subcategoryForm.sort_order"
-                min="0"
-              />
-            </div>
-          </div>
-
-          <!-- Status -->
-          <div class="form-group">
-            <label class="form-label">Publish Status</label>
-            <select class="form-control" [(ngModel)]="subcategoryForm.status">
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="form-footer">
             <button
               type="button"
-              class="btn btn-save"
-              [disabled]="isSaving()"
-              (click)="saveSubcategory()"
+              class="combobox-arrow-btn"
+              (click)="toggleGroupDropdown($event)"
+              title="Select from existing groups in DB"
             >
-              <img src="/icons/save.png" alt="" class="btn-save-img" (error)="onImgError($event)" />
-              {{ isSaving() ? 'Saving...' : (editingSubcategoryId() ? 'Update Subcategory' : 'Save Subcategory') }}
+              <span class="combobox-caret" [class.caret-up]="isGroupDropdownOpen()">▾</span>
             </button>
 
-            @if (editingSubcategoryId()) {
-              <button
-                type="button"
-                class="btn btn-cancel"
-                (click)="initNewSubcategoryForm()"
-              >
-                Cancel Edit
-              </button>
+            <!-- Dropdown Options in the same box -->
+            @if (isGroupDropdownOpen()) {
+              <div class="combobox-menu">
+                @if (availableGroups().length === 0) {
+                  <div class="combobox-empty-item">
+                    <span>
+                      @if (selectedParentCategoryName()) {
+                        No groups in "{{ selectedParentCategoryName() }}" yet — type a new one
+                      } @else {
+                        Select a Parent Category or type a new group
+                      }
+                    </span>
+                  </div>
+                } @else {
+                  <div class="combobox-menu-header">
+                    @if (selectedParentCategoryName()) {
+                      Groups in "{{ selectedParentCategoryName() }}" ({{ availableGroups().length }}):
+                    } @else {
+                      Groups from Database ({{ availableGroups().length }}):
+                    }
+                  </div>
+                  @for (grp of availableGroups(); track grp) {
+                    <div
+                      class="combobox-item"
+                      [class.item-selected]="subcategoryForm.group_name === grp"
+                      (click)="selectGroup(grp)"
+                    >
+                      <span class="combobox-item-text">{{ grp }}</span>
+                      @if (subcategoryForm.group_name === grp) {
+                        <span class="item-check">✓</span>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+          <p class="helper-text">Groups items in mega menus or catalog navigations</p>
+        </div>
+
+        <!-- Subcategory Name (Unified Combobox: Text Box & Dropdown in One) -->
+        <div class="form-group" (click)="$event.stopPropagation()">
+          <label class="form-label">Subcategory Name <span class="required">*</span></label>
+          <div class="combobox-unified">
+            <input
+              type="text"
+              class="form-control combobox-input"
+              placeholder="Type new subcategory or select from DB..."
+              [(ngModel)]="subcategoryForm.name"
+              (input)="onSubcategoryNameChange()"
+              (focus)="isSubNameDropdownOpen.set(true)"
+            />
+            <button
+              type="button"
+              class="combobox-arrow-btn"
+              (click)="toggleSubNameDropdown($event)"
+              title="Select from existing subcategories in DB"
+            >
+              <span class="combobox-caret" [class.caret-up]="isSubNameDropdownOpen()">▾</span>
+            </button>
+
+            <!-- Dropdown Options in the same box -->
+            @if (isSubNameDropdownOpen()) {
+              <div class="combobox-menu">
+                @if (availableSubcategoryNames().length === 0) {
+                  <div class="combobox-empty-item">
+                    <span>
+                      @if (selectedParentCategoryName()) {
+                        No subcategories in "{{ selectedParentCategoryName() }}" yet — type a new one
+                      } @else {
+                        Select a Parent Category or type a new subcategory
+                      }
+                    </span>
+                  </div>
+                } @else {
+                  <div class="combobox-menu-header">
+                    @if (selectedParentCategoryName()) {
+                      Subcategories in "{{ selectedParentCategoryName() }}" ({{ availableSubcategoryNames().length }}):
+                    } @else {
+                      Subcategories from Database ({{ availableSubcategoryNames().length }}):
+                    }
+                  </div>
+                  @for (subName of availableSubcategoryNames(); track subName) {
+                    <div
+                      class="combobox-item"
+                      [class.item-selected]="subcategoryForm.name === subName"
+                      (click)="selectSubName(subName)"
+                    >
+                      <span class="combobox-item-text">{{ subName }}</span>
+                      @if (subcategoryForm.name === subName) {
+                        <span class="item-check">✓</span>
+                      }
+                    </div>
+                  }
+                }
+              </div>
             }
           </div>
         </div>
+
+        <!-- 2 Columns: URL Slug & Sort Order -->
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">URL Slug</label>
+            <input type="text" class="form-control font-mono" placeholder="e.g. panjabi-kurta"
+              [(ngModel)]="subcategoryForm.slug" (input)="onSubcategorySlugChange()" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sort Order</label>
+            <input type="number" class="form-control" [(ngModel)]="subcategoryForm.sort_order" min="0" />
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <label class="form-label">Publish Status</label>
+          <select class="form-control" [(ngModel)]="subcategoryForm.status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-footer">
+          <button type="button" class="btn btn-save" [disabled]="isSaving()" (click)="saveSubcategory()">
+            <img src="/icons/save.png" alt="" class="btn-save-img" (error)="onImgError($event)" />
+            {{ isSaving() ? 'Saving...' : (editingSubcategoryId() ? 'Update Subcategory' : 'Save Subcategory') }}
+          </button>
+
+          @if (editingSubcategoryId()) {
+          <button type="button" class="btn btn-cancel" (click)="initNewSubcategoryForm()">
+            Cancel Edit
+          </button>
+          }
+        </div>
+      </div>
       }
     </div>
 
@@ -400,38 +409,21 @@
       <div class="filter-bar">
         <div class="search-input-wrapper">
           <img src="/icons/search.png" alt="" class="search-icon-img" (error)="onImgError($event)" />
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Filter categories, groups, or subcategories..."
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="onSearchChange()"
-          />
+          <input type="text" class="search-input" placeholder="Filter categories, groups, or subcategories..."
+            [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()" />
         </div>
 
         <div class="status-pills">
-          <button
-            type="button"
-            class="status-pill"
-            [class.active]="filterStatus() === 'all'"
-            (click)="setFilterStatus('all')"
-          >
+          <button type="button" class="status-pill" [class.active]="filterStatus() === 'all'"
+            (click)="setFilterStatus('all')">
             All ({{ allCount() }})
           </button>
-          <button
-            type="button"
-            class="status-pill"
-            [class.active]="filterStatus() === 'active'"
-            (click)="setFilterStatus('active')"
-          >
+          <button type="button" class="status-pill" [class.active]="filterStatus() === 'active'"
+            (click)="setFilterStatus('active')">
             Active ({{ activeCount() }})
           </button>
-          <button
-            type="button"
-            class="status-pill"
-            [class.active]="filterStatus() === 'inactive'"
-            (click)="setFilterStatus('inactive')"
-          >
+          <button type="button" class="status-pill" [class.active]="filterStatus() === 'inactive'"
+            (click)="setFilterStatus('inactive')">
             Inactive ({{ inactiveCount() }})
           </button>
         </div>
@@ -440,150 +432,127 @@
       <!-- Hierarchy Tree List -->
       <div class="hierarchy-list">
         @if (isLoading()) {
-          <div class="state-container">
-            <div class="loading-spinner"></div>
-            <p>Loading hierarchy data...</p>
-          </div>
+        <div class="state-container">
+          <div class="loading-spinner"></div>
+          <p>Loading hierarchy data...</p>
+        </div>
         } @else if (categories().length === 0) {
-          <div class="state-container empty-state">
-            <p>No categories found matching your filter.</p>
-          </div>
+        <div class="state-container empty-state">
+          <p>No categories found matching your filter.</p>
+        </div>
         } @else {
-          @for (cat of categories(); track cat.category_id) {
-            <div class="category-card" [class.is-expanded]="isExpanded(cat.category_id)">
-              <!-- Category Header Row -->
-              <div class="category-row" (click)="toggleExpand(cat.category_id)">
-                <!-- Left: Caret + Name + Badges -->
-                <div class="cat-left">
-                  <span class="caret">
-                    <span class="caret-arrow" [class.rotated]="isExpanded(cat.category_id)"></span>
-                  </span>
+        @for (cat of categories(); track cat.category_id) {
+        <div class="category-card" [class.is-expanded]="isExpanded(cat.category_id)">
+          <!-- Category Header Row -->
+          <div class="category-row" (click)="toggleExpand(cat.category_id)">
+            <!-- Left: Caret + Name + Badges -->
+            <div class="cat-left">
+              <span class="caret">
+                <span class="caret-arrow" [class.rotated]="isExpanded(cat.category_id)"></span>
+              </span>
 
-                  <span class="cat-name" [class.highlighted]="cat.is_highlighted">
-                    {{ cat.name }}
-                  </span>
+              <span class="cat-name" [class.highlighted]="cat.is_highlighted">
+                {{ cat.name }}
+              </span>
 
-                  @if (cat.badge) {
-                    <span class="cat-badge-pill">{{ cat.badge }}</span>
-                  }
+              @if (cat.badge) {
+              <span class="cat-badge-pill">{{ cat.badge }}</span>
+              }
 
-                  <span class="cat-id-pill" title="Click to copy" (click)="$event.stopPropagation(); copyToClipboard(cat.category_id, 'Category ID')">
-                    ID: {{ cat.category_id }}
-                  </span>
+              <span class="cat-id-pill" title="Click to copy"
+                (click)="$event.stopPropagation(); copyToClipboard(cat.category_id, 'Category ID')">
+                ID: {{ cat.category_id }}
+              </span>
 
-                  <span class="product-count-pill">
-                    {{ cat.products_count || 0 }} {{ (cat.products_count === 1) ? 'Product' : 'Products' }}
-                  </span>
+              <span class="product-count-pill">
+                {{ cat.products_count || 0 }} {{ (cat.products_count === 1) ? 'Product' : 'Products' }}
+              </span>
+            </div>
+
+            <!-- Right: Status + Action Buttons -->
+            <div class="cat-right">
+              <span class="status-indicator" [class.active]="cat.status === 'active'">
+                <span class="status-dot"></span>
+                {{ cat.status === 'active' ? 'Active' : 'Inactive' }}
+              </span>
+
+              <button type="button" class="btn-row-action btn-sub" title="Add Subcategory"
+                (click)="openAddSubcategoryFor(cat, $event)">
+                + Sub
+              </button>
+
+              <button type="button" class="btn-row-action btn-edit" title="Edit Category"
+                (click)="$event.stopPropagation(); editCategory(cat)">
+                <img src="/icons/edit.png" alt="" class="btn-row-img" (error)="onImgError($event)" />
+                Edit
+              </button>
+
+              <button type="button" class="btn-row-action btn-delete" title="Delete Category"
+                (click)="deleteCategory(cat, $event)">
+                <img src="/icons/delete.png" alt="" class="btn-row-img" (error)="onImgError($event)" />
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <!-- Expanded Subcategories Drawer -->
+          @if (isExpanded(cat.category_id)) {
+          <div class="subcategories-drawer">
+            @if (cat.subcategories.length === 0) {
+            <div class="no-subs">
+              <span>No subcategories yet.</span>
+              <button type="button" class="btn-add-sub-link" (click)="openAddSubcategoryFor(cat, $event)">
+                + Add Subcategory
+              </button>
+            </div>
+            } @else {
+            <div class="groups-container">
+              @for (g of getSubcategoriesByGroup(cat.subcategories); track g.group) {
+              <div class="sub-group-block">
+                <div class="group-header">
+                  <span class="group-title">{{ g.group }}</span>
+                  <span class="group-count">({{ g.items.length }})</span>
                 </div>
 
-                <!-- Right: Status + Action Buttons -->
-                <div class="cat-right">
-                  <span class="status-indicator" [class.active]="cat.status === 'active'">
-                    <span class="status-dot"></span>
-                    {{ cat.status === 'active' ? 'Active' : 'Inactive' }}
-                  </span>
-
-                  <button
-                    type="button"
-                    class="btn-row-action btn-sub"
-                    title="Add Subcategory"
-                    (click)="openAddSubcategoryFor(cat, $event)"
-                  >
-                    + Sub
-                  </button>
-
-                  <button
-                    type="button"
-                    class="btn-row-action btn-edit"
-                    title="Edit Category"
-                    (click)="$event.stopPropagation(); editCategory(cat)"
-                  >
-                    <img src="/icons/edit.png" alt="" class="btn-row-img" (error)="onImgError($event)" />
-                    Edit
-                  </button>
-
-                  <button
-                    type="button"
-                    class="btn-row-action btn-delete"
-                    title="Delete Category"
-                    (click)="deleteCategory(cat, $event)"
-                  >
-                    <img src="/icons/delete.png" alt="" class="btn-row-img" (error)="onImgError($event)" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-
-              <!-- Expanded Subcategories Drawer -->
-              @if (isExpanded(cat.category_id)) {
-                <div class="subcategories-drawer">
-                  @if (cat.subcategories.length === 0) {
-                    <div class="no-subs">
-                      <span>No subcategories yet.</span>
-                      <button
-                        type="button"
-                        class="btn-add-sub-link"
-                        (click)="openAddSubcategoryFor(cat, $event)"
-                      >
-                        + Add Subcategory
+                <div class="sub-items-grid">
+                  @for (sub of g.items; track sub.subcategory_id) {
+                  <div class="sub-item-card">
+                    <div class="sub-item-info">
+                      <div class="sub-name-row">
+                        <span class="sub-name">{{ sub.name }}</span>
+                        <span class="sub-slug">/{{ sub.slug }}</span>
+                      </div>
+                      <div class="sub-meta-row">
+                        <span class="sub-id">ID: {{ sub.subcategory_id }}</span>
+                        <span class="sub-sort">Order: {{ sub.sort_order }}</span>
+                        <span class="sub-status" [class.active]="sub.status === 'active'">
+                          {{ sub.status }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="sub-item-actions">
+                      <button type="button" class="sub-btn-edit" title="Edit Subcategory"
+                        (click)="editSubcategory(sub, $event)">
+                        <img src="/icons/edit.png" alt="" class="sub-btn-img" (error)="onImgError($event)" />
+                        Edit
+                      </button>
+                      <button type="button" class="sub-btn-del" title="Delete Subcategory"
+                        (click)="deleteSubcategory(sub, $event)">
+                        <img src="/icons/delete.png" alt="" class="sub-btn-img" (error)="onImgError($event)" />
+                        Delete
                       </button>
                     </div>
-                  } @else {
-                    <div class="groups-container">
-                      @for (g of getSubcategoriesByGroup(cat.subcategories); track g.group) {
-                        <div class="sub-group-block">
-                          <div class="group-header">
-                            <span class="group-title">{{ g.group }}</span>
-                            <span class="group-count">({{ g.items.length }})</span>
-                          </div>
-
-                          <div class="sub-items-grid">
-                            @for (sub of g.items; track sub.subcategory_id) {
-                              <div class="sub-item-card">
-                                <div class="sub-item-info">
-                                  <div class="sub-name-row">
-                                    <span class="sub-name">{{ sub.name }}</span>
-                                    <span class="sub-slug">/{{ sub.slug }}</span>
-                                  </div>
-                                  <div class="sub-meta-row">
-                                    <span class="sub-id">ID: {{ sub.subcategory_id }}</span>
-                                    <span class="sub-sort">Order: {{ sub.sort_order }}</span>
-                                    <span class="sub-status" [class.active]="sub.status === 'active'">
-                                      {{ sub.status }}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div class="sub-item-actions">
-                                  <button
-                                    type="button"
-                                    class="sub-btn-edit"
-                                    title="Edit Subcategory"
-                                    (click)="editSubcategory(sub, $event)"
-                                  >
-                                    <img src="/icons/edit.png" alt="" class="sub-btn-img" (error)="onImgError($event)" />
-                                    Edit
-                                  </button>
-                                  <button
-                                    type="button"
-                                    class="sub-btn-del"
-                                    title="Delete Subcategory"
-                                    (click)="deleteSubcategory(sub, $event)"
-                                  >
-                                    <img src="/icons/delete.png" alt="" class="sub-btn-img" (error)="onImgError($event)" />
-                                    Delete
-                                  </button>
-                                </div>
-                              </div>
-                            }
-                          </div>
-                        </div>
-                      }
-                    </div>
+                  </div>
                   }
                 </div>
+              </div>
               }
             </div>
+            }
+          </div>
           }
+        </div>
+        }
         }
       </div>
     </div>
